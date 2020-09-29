@@ -1,0 +1,11 @@
+node_modules
+build
+alignement.json
+npm-debug.log
+.env
+.DS_Store
+*.log
+ceres/config/index.js
+cli/config/index.js
+tmp
+out

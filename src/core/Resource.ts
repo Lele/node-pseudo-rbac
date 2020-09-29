@@ -1,0 +1,111 @@
+import Action, {IActionInfo, IActions} from './Action'
+import Role, {IRole, IRoles} from './Role'
+import IUser from './IUser'
+import Permissions, {ISerializedPermission, IPermissionList} from './Permission'
+
+export interface IGetRoles{
+  (user: IUser, ticket: unknown): IUser
+}
+
+export interface IResourceOptions {
+  label?:string
+  actions?: (string|IActionInfo)[]
+  resourceRoles?:(string|IRole)[]
+  resourceRolePermissions?: IPermissionList
+  getRoles?: IGetRoles
+}
+
+export interface IResources {
+  [resource: string]: Resource
+}
+
+export interface ISerializedResource {
+  name: string
+  label: string
+  actions: IActionInfo[]
+  resourceRoles: IRole[]
+  resourceRolePermissions?: ISerializedPermission[]
+}
+
+class Resource {
+  label: string
+  actions?: IActions
+  resourceRoles?: IRoles
+  resourceRolePermissions?: Permissions
+  getRoles?: IGetRoles
+
+  constructor(public name:string, options: IResourceOptions){
+    this.label = options.label||this.name
+
+    if(options.actions) {
+      this.actions = options.actions.reduce((aggr:IActions, actionItem: string|IActionInfo): IActions => {
+        if(typeof actionItem === 'string'){
+          aggr[actionItem] = new Action(actionItem)
+        }else{
+          aggr[actionItem.name] =  new Action(actionItem.name, actionItem.label)
+        }
+        return aggr
+      }, {});
+    }
+
+    if(options.resourceRoles) {
+      this.resourceRoles = options.resourceRoles.reduce((aggr: IRoles, roleItem: string|IRole):IRoles => {
+        if(typeof roleItem === 'string'){
+          aggr[roleItem] = new Role(roleItem)
+        } else {
+          aggr[roleItem.name] = new Role(roleItem.name, roleItem.label)
+        }
+        return aggr;
+      }, {})
+    }
+
+    if(options.resourceRolePermissions) {
+      this.setResourceRolePermissions(options.resourceRolePermissions)
+    }
+
+    if(options.getRoles){
+      this.getRoles = options.getRoles
+    }
+  }
+
+  setResourceRolePermissions(resourceRolePermissions: IPermissionList):void {
+    for(const[roleName, actionPermissions] of Object.entries(resourceRolePermissions)){
+      if(!this.hasResourceRole(roleName)){
+        throw Error(`No ${this.name} role found with name ${roleName}`);
+      }
+      for(const actionName of Object.keys(actionPermissions)){
+        if(!this.hasAction(actionName)){
+          throw Error(`No ${this.name} action found with name ${roleName}`);
+        }
+      }
+    }
+    this.resourceRolePermissions = new Permissions(this.name, true, resourceRolePermissions)
+  }
+
+  hasResourceRole(roleName: string): boolean{
+    return roleName in this.resourceRoles
+  }
+
+  hasAction(actionName: string): boolean{
+    return actionName in this.actions
+  }
+
+  toJSON(): ISerializedResource{
+    return {
+      name: this.name,
+      label: this.label,
+      actions: Object.values(this.actions).map(action=>({
+        name: action.name,
+        label: action.label
+      })),
+      resourceRoles: Object.values(this.resourceRoles).map((resourceRole)=>({
+        name: resourceRole.name,
+        label: resourceRole.label,
+        description: resourceRole.description
+      })),
+      resourceRolePermissions: this.resourceRolePermissions?.toJSON()
+    }
+  }
+}
+
+export default Resource
