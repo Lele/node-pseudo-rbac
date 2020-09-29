@@ -73,7 +73,7 @@ class Core {
   }
 
   toJSON(): ISerializedRbac{
-    const outJson = {
+    const outJson: ISerializedRbac  = {
       roles: [],
       resources: [],
       permissions: []
@@ -102,35 +102,37 @@ class Core {
 
   can(user:IUser, action: string, resourceName:string, resourceObj?:unknown):boolean|IPermissionCheck {
     let {roles, resourceRoles} = user
-    const resourcePermission = this.permissions[resourceName]
-    for(const role of roles){
-      const permissionRes = resourcePermission.can(action, role)
-      if(permissionRes && permissionRes.value === ANY){
-        return {
-          match: {
-            role
-          },
-          value: ANY
+    if(this.permissions) {
+      const resourcePermission = this.permissions[resourceName]
+      for(const role of roles){
+        const permissionRes = resourcePermission.can(action, role)
+        if(permissionRes && permissionRes.value === ANY){
+          return {
+            match: {
+              role
+            },
+            value: ANY
+          }
         }
       }
-    }
 
-    if(resourceObj && this.resources[resourceName].getRoles){
-      ({roles, resourceRoles} = this.resources[resourceName].getRoles(user, resourceObj))
-    }
+      if(resourceObj  && this.resources && this.resources[resourceName]){
+        ({roles, resourceRoles} = this.resources[resourceName]?.getRoles(user, resourceObj))
+      }
 
-    for(const role of roles) {
-      if(resourceRoles.length > 0) {
-        for(const resourceRole of resourceRoles) {
-          const permissionValue = resourcePermission.can(action, role, resourceRole, this.resources[resourceName].resourceRolePermissions)
+      for(const role of roles) {
+        if(resourceRoles.length > 0) {
+          for(const resourceRole of resourceRoles) {
+            const permissionValue = resourcePermission.can(action, role, resourceRole, this.resources[resourceName].resourceRolePermissions)
+            if(permissionValue){
+              return permissionValue
+            }
+          }
+        } else {
+          const permissionValue = resourcePermission.can(action, role, undefined, this.resources[resourceName].resourceRolePermissions)
           if(permissionValue){
             return permissionValue
           }
-        }
-      } else {
-        const permissionValue = resourcePermission.can(action, role, undefined, this.resources[resourceName].resourceRolePermissions)
-        if(permissionValue){
-          return permissionValue
         }
       }
     }

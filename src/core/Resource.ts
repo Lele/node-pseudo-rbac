@@ -22,8 +22,8 @@ export interface IResources {
 export interface ISerializedResource {
   name: string
   label: string
-  actions: IActionInfo[]
-  resourceRoles: IRole[]
+  actions?: IActionInfo[]
+  resourceRoles?: IRole[]
   resourceRolePermissions?: ISerializedPermission[]
 }
 
@@ -32,12 +32,12 @@ class Resource {
   actions?: IActions
   resourceRoles?: IRoles
   resourceRolePermissions?: Permissions
-  getRoles?: IGetRoles
+  getRoles: IGetRoles
 
-  constructor(public name:string, options: IResourceOptions){
-    this.label = options.label||this.name
+  constructor(public name:string, options?: IResourceOptions){
+    this.label = options?.label||this.name
 
-    if(options.actions) {
+    if(options?.actions) {
       this.actions = options.actions.reduce((aggr:IActions, actionItem: string|IActionInfo): IActions => {
         if(typeof actionItem === 'string'){
           aggr[actionItem] = new Action(actionItem)
@@ -48,7 +48,7 @@ class Resource {
       }, {});
     }
 
-    if(options.resourceRoles) {
+    if(options?.resourceRoles) {
       this.resourceRoles = options.resourceRoles.reduce((aggr: IRoles, roleItem: string|IRole):IRoles => {
         if(typeof roleItem === 'string'){
           aggr[roleItem] = new Role(roleItem)
@@ -59,13 +59,16 @@ class Resource {
       }, {})
     }
 
-    if(options.resourceRolePermissions) {
+    if(options?.resourceRolePermissions) {
       this.setResourceRolePermissions(options.resourceRolePermissions)
     }
 
-    if(options.getRoles){
+    if(options?.getRoles){
       this.getRoles = options.getRoles
+    } else {
+      this.getRoles = (user: IUser, ):IUser => {return user};
     }
+
   }
 
   setResourceRolePermissions(resourceRolePermissions: IPermissionList):void {
@@ -83,22 +86,22 @@ class Resource {
   }
 
   hasResourceRole(roleName: string): boolean{
-    return roleName in this.resourceRoles
+    return !!this.resourceRoles && roleName in this.resourceRoles
   }
 
   hasAction(actionName: string): boolean{
-    return actionName in this.actions
+    return !!this.actions && actionName in this.actions
   }
 
   toJSON(): ISerializedResource{
     return {
       name: this.name,
       label: this.label,
-      actions: Object.values(this.actions).map(action=>({
+      actions: this.actions && Object.values(this.actions).map((action):IActionInfo=>({
         name: action.name,
         label: action.label
       })),
-      resourceRoles: Object.values(this.resourceRoles).map((resourceRole)=>({
+      resourceRoles: this.resourceRoles && Object.values(this.resourceRoles).map((resourceRole): IRole =>({
         name: resourceRole.name,
         label: resourceRole.label,
         description: resourceRole.description

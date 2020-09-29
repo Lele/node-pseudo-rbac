@@ -1,6 +1,6 @@
 export interface IActionInfo{
   name:string
-  label:string
+  label?:string
 }
 
 class Action {
