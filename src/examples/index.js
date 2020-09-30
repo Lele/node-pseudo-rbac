@@ -1,4 +1,4 @@
-const Core = require('../core/Core').default;
+const Core = require('../core/Core').default
 
 const core = new Core()
 
@@ -6,13 +6,13 @@ core.addRole('owner')
 core.addRole('member', 'Member')
 core.addRole('customer', 'Customer')
 
-core.addResource('ticket',{
+core.addResource('ticket', {
   actions: ['read', 'assign', 'comment'],
   resourceRoles: ['author', 'watcher', 'assignee'],
   resourceRolePermissions: {
     author: {
       read: true,
-      comment: true,
+      comment: true
     },
     watcher: {
       read: true,
@@ -20,21 +20,20 @@ core.addResource('ticket',{
     },
     assignee: {
       read: true,
-      comment: true,
+      comment: true
     }
   },
   getRoles: (user, ticket) => {
-    const roles = user.roles;
+    const roles = user.roles
     const resourceRoles = []
 
-    if(ticket.watchers.includes(user.id))
-    {
+    if (ticket.watchers.includes(user.id)) {
       resourceRoles.push('watcher')
     }
-    if(ticket.author === user.id){
+    if (ticket.author === user.id) {
       resourceRoles.push('author')
     }
-    if(ticket.assignee === user.id){
+    if (ticket.assignee === user.id) {
       resourceRoles.push('assignee')
     }
     return {
@@ -42,7 +41,7 @@ core.addResource('ticket',{
       resourceRoles
     }
   }
-});
+})
 
 core.setPermissions({
   ticket: {
@@ -57,14 +56,14 @@ core.setPermissions({
       }
     }
   }
-});
+})
 
-console.log(core.toJSON());
+console.log(core.toJSON())
 
 const user = {
-  roles:['customer'],
+  roles: ['customer'],
   resourceRoles: [],
-  id:1
+  id: 1
 }
 const ticket = {
   author: 2,
@@ -72,6 +71,6 @@ const ticket = {
   watchers: [1]
 }
 
-const res = core.can(user,'read', 'ticket', ticket)
+const res = core.can(user, 'read', 'ticket', ticket)
 
 console.log(res)

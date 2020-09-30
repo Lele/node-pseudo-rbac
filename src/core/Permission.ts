@@ -1,4 +1,4 @@
-export const ANY = 2;
+export const ANY = 2
 
 type PermissionValue = boolean | typeof ANY
 
@@ -22,14 +22,24 @@ export interface ISerializedPermission {
   value: boolean
 }
 
-class Permissions {
-  constructor(public resource:string, public resourceRolePermissions: boolean, public permissionObject: IPermissionList){}
+interface IPermissionResultItem {
+  role?:string
+  resourceRole?:string
+}
 
-  can(action: string, role: string, resourceRole?:string, defaultResRolePermissions?:Permissions): false|IPermissionCheck{
+export interface IPermissionCheck {
+  match: IPermissionResultItem
+  value: PermissionValue
+}
+
+class Permissions {
+  constructor (public resource:string, public resourceRolePermissions: boolean, public permissionObject: IPermissionList) {}
+
+  can (action: string, role: string, resourceRole?:string, defaultResRolePermissions?:Permissions): false|IPermissionCheck {
     const rolePermissions = this.permissionObject[role]
-    if(rolePermissions && action in rolePermissions){
-      if(typeof rolePermissions[action] === 'boolean'){
-        if(rolePermissions[action]){
+    if (rolePermissions && action in rolePermissions) {
+      if (typeof rolePermissions[action] === 'boolean') {
+        if (rolePermissions[action]) {
           return {
             match: {
               role
@@ -40,13 +50,11 @@ class Permissions {
           return false
         }
       } else {
-        if(resourceRole && resourceRole in (rolePermissions[action] as IPermission))
-        {
+        if (resourceRole && resourceRole in (rolePermissions[action] as IPermission)) {
           const resourceRolePermission: IPermission = rolePermissions[action] as IPermission
-          if(resourceRolePermission[resourceRole])
-          {
+          if (resourceRolePermission[resourceRole]) {
             return {
-              match:{role, resourceRole},
+              match: { role, resourceRole },
               value: resourceRolePermission[resourceRole]
             }
           } else {
@@ -55,20 +63,20 @@ class Permissions {
         }
       }
     }
-    if(resourceRole){
+    if (resourceRole) {
       const defaultPermission = defaultResRolePermissions?.can(action, resourceRole)
-      if(defaultPermission) {
+      if (defaultPermission) {
         return defaultPermission
       }
     }
     return false
   }
 
-  toJSON():ISerializedPermission[]{
+  toJSON ():ISerializedPermission[] {
     const outJson:ISerializedPermission[] = []
     for (const [role, rolePermissions] of Object.entries(this.permissionObject)) {
       for (const [action, actionPermission] of Object.entries(rolePermissions)) {
-        if (typeof actionPermission === 'boolean'){
+        if (typeof actionPermission === 'boolean') {
           outJson.push({
             resource: this.resource,
             role: role,
@@ -89,7 +97,7 @@ class Permissions {
       }
     }
 
-    return outJson;
+    return outJson
   }
 }
 
@@ -99,16 +107,6 @@ export interface ISytemPermissionList {
 
 export interface ISytemPermissions {
   [resource: string]: Permissions
-}
-
-interface IPermissionResultItem {
-  role?:string
-  resourceRole?:string
-}
-
-export interface IPermissionCheck {
-  match: IPermissionResultItem
-  value: PermissionValue
 }
 
 export default Permissions

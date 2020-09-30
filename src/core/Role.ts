@@ -4,10 +4,6 @@ export interface IRole{
   description?: string
 }
 
-export interface IRoles {
-  [role: string]: Role
-}
-
 export interface IUserRoles {
   roles: string[]
   resourceRoles: string[]
@@ -16,17 +12,21 @@ export interface IUserRoles {
 class Role {
   public label: string
 
-  constructor(public name:string, label?:string, public description?:string){
-    this.label = label||this.name
+  constructor (public name:string, label?:string, public description?:string) {
+    this.label = label || this.name
   }
 
-  toJSON():IRole{
+  toJSON ():IRole {
     return {
       name: this.name,
       label: this.label,
       description: this.description
     }
   }
+}
+
+export interface IRoles {
+  [role: string]: Role
 }
 
 export default Role

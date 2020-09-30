@@ -4,8 +4,8 @@ export interface IActionInfo{
 }
 
 class Action {
-  constructor(public name:string, public label?:string, public description?:string){
-    this.label = label||this.name
+  constructor (public name:string, public label?:string, public description?:string) {
+    this.label = label || this.name
   }
 }
 
