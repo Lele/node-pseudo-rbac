@@ -20,18 +20,25 @@ class Core {
     this.permissions = undefined
   }
 
-  addRole (name:string, label?:string, description?:string):void{
-    this.checkRoleName(name)
-    this.roles[name] = new Role(name, label, description)
+  addRole (role:string|Role, label?:string, description?:string):void{
+    if (typeof role === 'string') {
+      this.checkRoleName(role)
+      this.roles[role] = new Role(role, label, description)
+    } else {
+      this.checkRoleName(role.name)
+      this.roles[role.name] = role
+    }
   }
 
-  setRoles (roles:(string|IRole)[]):void {
+  setRoles (roles:(string|IRole|Role)[]):void {
     this.roles = {}
 
     for (const roleInfo of roles) {
       if (typeof roleInfo === 'string') {
         const newRole = new Role(roleInfo)
         this.roles[newRole.name] = newRole
+      } else if (roleInfo instanceof Role) {
+        this.roles[roleInfo.name] = roleInfo
       } else {
         const newRole = new Role(roleInfo.name, roleInfo.label, roleInfo.description)
         this.roles[newRole.name] = newRole
@@ -39,17 +46,23 @@ class Core {
     }
   }
 
-  addResource (name:string, options?:IResourceOptions):void{
-    this.resources[name] = new Resource(name, options)
+  addResource (resource:string|Resource, options?:IResourceOptions):void{
+    if (typeof resource === 'string') {
+      this.resources[resource] = new Resource(resource, options)
+    } else {
+      this.resources[resource.name] = resource
+    }
   }
 
-  setResources (resources:(string|IResource)[]):void {
+  setResources (resources:(string|IResource|Resource)[]):void {
     this.resources = {}
 
     for (const resourceInfo of resources) {
       if (typeof resourceInfo === 'string') {
         const newResource = new Resource(resourceInfo)
         this.resources[newResource.name] = newResource
+      } else if (resourceInfo instanceof Resource) {
+        this.resources[resourceInfo.name] = resourceInfo
       } else {
         const newResource = new Resource(resourceInfo.name, resourceInfo?.options)
         this.resources[newResource.name] = newResource
