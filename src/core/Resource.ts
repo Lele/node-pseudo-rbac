@@ -4,7 +4,7 @@ import IUser from './IUser'
 import Permissions, { ISerializedPermission, IPermissionList } from './Permission'
 
 export interface IGetRoles{
-  (user: IUser, ticket: unknown): IUser
+  (user: IUser, ticket: unknown): IUser|Promise<IUser>
 }
 
 export interface IResourceOptions {
@@ -67,7 +67,7 @@ class Resource {
     if (options?.getRoles) {
       this.getRoles = options.getRoles
     } else {
-      this.getRoles = (user: IUser):IUser => { return user }
+      this.getRoles = (user: IUser):IUser|Promise<IUser> => { return user }
     }
   }
 

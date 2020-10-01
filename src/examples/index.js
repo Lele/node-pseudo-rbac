@@ -1,6 +1,4 @@
-import Core from '../core/Core'
-
-const core = new Core()
+import core from '../core'
 
 core.addRole('owner')
 core.addRole('member', 'Member')
@@ -110,6 +108,8 @@ const user = {
   id: 1
 }
 const ticket = {
+  title: 'bla',
+  body: 'blabla',
   author: 2,
   assignee: undefined,
   watchers: [1]

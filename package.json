@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "role based access control for nodejs",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "notation": "^2.0.0"
+  },
   "devDependencies": {
     "@types/node": "^14.11.2",
     "@typescript-eslint/eslint-plugin": "^4.3.0",

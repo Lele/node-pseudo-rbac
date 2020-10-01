@@ -3,10 +3,20 @@ import Role, { IRole, IRoles } from './Role'
 import IUser from './IUser'
 import Permissions, { ISytemPermissions, ISerializedPermission, ISytemPermissionList, IPermissionCheck, ANY } from './Permission'
 
+import { Notation } from 'notation'
+
+const Glob = Notation.Glob
+
 interface ISerializedRbac{
   roles: IRole[],
   resources: ISerializedResource[]
   permissions: ISerializedPermission[]
+}
+
+export interface ICheck {
+  matches: IPermissionCheck[],
+  value: boolean | typeof ANY,
+  attributes: string[]
 }
 
 class Core {
@@ -68,6 +78,10 @@ class Core {
         this.resources[newResource.name] = newResource
       }
     }
+  }
+
+  setPermission (permission: ISerializedPermission):void{
+    this.permissions.setPermission(permission)
   }
 
   setPermissions (permissions:ISytemPermissionList):void{
@@ -140,7 +154,7 @@ class Core {
     return outJson
   }
 
-  can (user:IUser, action: string, resourceName:string, resourceObj?:unknown):boolean|IPermissionCheck {
+  async can (user:IUser, action: string, resourceName:string, resourceObj?:unknown):Promise<boolean|ICheck> {
     let { roles, resourceRoles } = user
     if (this.permissions) {
       const resourcePermission = this.permissions[resourceName]
@@ -148,32 +162,44 @@ class Core {
         const permissionRes = resourcePermission.can(action, role)
         if (permissionRes && permissionRes.value === ANY) {
           return {
-            match: {
-              role
-            },
-            value: ANY
+            matches: [permissionRes],
+            value: ANY,
+            attributes: ['*']
           }
         }
       }
 
       if (resourceObj && this.resources && this.resources[resourceName]) {
-        ({ roles, resourceRoles } = this.resources[resourceName]?.getRoles(user, resourceObj))
+        ({ roles, resourceRoles } = await this.resources[resourceName]?.getRoles(user, resourceObj))
       }
+
+      const matches: IPermissionCheck[] = []
+      const attributes: string[] = []
 
       for (const role of roles) {
         if (resourceRoles.length > 0) {
           for (const resourceRole of resourceRoles) {
             const permissionValue = resourcePermission.can(action, role, resourceRole, this.resources[resourceName].resourceRolePermissions)
             if (permissionValue) {
-              return permissionValue
+              matches.push(permissionValue)
+              attributes.push(...permissionValue.attributes)
             }
           }
         } else {
           const permissionValue = resourcePermission.can(action, role, undefined, this.resources[resourceName].resourceRolePermissions)
           if (permissionValue) {
-            return permissionValue
+            matches.push(permissionValue)
+            attributes.push(...permissionValue.attributes)
           }
         }
+      }
+      if (matches.length === 0) {
+        return false
+      }
+      return {
+        matches,
+        value: true,
+        attributes: Glob.normalize(attributes) as string[]
       }
     }
     return false

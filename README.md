@@ -1,15 +1,16 @@
 # README
-We started to build this library because my team needed a permission library that could evaluate the role of a user in the context of the application and with respect to the resource taken into consideration.
+We started to build this library because my team needed a permission library that could evaluate the permissions of a user based on his/her role in the application and with respect to the resource taken into consideration.
 
 Let's take an example. Consider we should build a ticketing system in an application with these requirements:
-  - user haa one Role among: Owner, Member, Customer
+  - user has one or more Roles among: Owner, Member, Customer
   - every ticket has an author, an assignee and 0 or more watchers
   - every ticket could have one or more comments
   - every ticket could have one or more attachments
-  - ticket workflows have 3 steps: Open, Assigned, Closed
+  - ticket can be assigned to one user
 
 We can immediately see that every user has a Role in the application (Owner, Member or Customer) and one or more roles with respect to the ticket; we want to define permissions based on all.
 For example, let's think about *read*, *assign* and *comment* permissions. For example, we can state that:
+
 #### read
   - the Owner can read `ANY` ticket
   - the Member can read  `ANY` ticket
@@ -69,14 +70,24 @@ Our ticket library let the user define:
   const resources = [
     {
       name: 'ticket',
-      actions: [
-        'read',
-        {
-          action: 'assign',
-          label: 'Assign'
-        },
-        'comment'
-      ]
+      options: {
+        actions: ['read', 'assign', 'comment'],
+        resourceRoles: ['author', 'watcher', 'assignee'],
+        resourceRolePermissions: {
+          author: {
+            read: true,
+            comment: true
+          },
+          watcher: {
+            read: true,
+            comment: true
+          },
+          assignee: {
+            read: true,
+            comment: true
+          }
+        }
+      }
     }
   ]
 
@@ -85,8 +96,7 @@ Our ticket library let the user define:
   // if the user can assume particular roles with respect to the resource you have to specify resource-roles
   // at this point you need to define a function that returns user roles and user resource-roles
   // if you specify resource-roles you probably want to specify generic resource-role permissions for every action
-  rbac.addResource({
-    name: 'ticket',
+  rbac.addResource("ticket", {
     resourceRoles: ['author', 'watcher', 'assignee'],
     actions: ['read', 'assign', 'comment'],
     resourceRolePermissions: {
@@ -103,16 +113,24 @@ Our ticket library let the user define:
         comment: true,
       }
     },
-    getRoles: (user, {roles, resourceRoles} , ticket) => {
-      const userRoles = {
+    getRoles: (user, ticket) => {
+      const roles = user.roles
+      const resourceRoles = []
+
+      if (ticket.watchers.includes(user.id)) {
+        resourceRoles.push('watcher')
+      }
+      if (ticket.author === user.id) {
+        resourceRoles.push('author')
+      }
+      if (ticket.assignee === user.id) {
+        resourceRoles.push('assignee')
+      }
+      return {
         roles,
-        resourceRoles:[]
+        resourceRoles
       }
-      if(ticket.author == user){
-        userRoles.resourceRoles.push('author')
-      }
-      return userRoles;
-    },
+    }
   })
 ```
 ### Defining **ROLE PERMISSIONS**
@@ -150,6 +168,6 @@ rbac.setPermissions({
     next()
   })
 
-  // req.user must be defined like the resource we want to test permissions on
+  // req.user e req["resourceName"] should be defined like the resource we want to test permissions on
   app.get('/:ticketId',myAuthMiddleware, rbac.can('read', 'ticket'), myGetTicketController)
 ```
