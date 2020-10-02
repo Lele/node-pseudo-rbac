@@ -18,6 +18,7 @@
     "build",
     "node_modules",
     "coverage",
-    "types"
+    "types",
+    "**/__tests__/*"
   ]
 }

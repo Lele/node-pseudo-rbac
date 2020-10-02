@@ -3,21 +3,21 @@ import Role, { IRole, IRoles } from './Role'
 import IUser from './IUser'
 import Permissions, { ISerializedPermission, IPermissionList } from './Permission'
 
-export interface IGetRoles{
-  (user: IUser, ticket: unknown): IUser|Promise<IUser>
+export interface IGetRoles <U extends IUser>{
+  (user: U, ticket: unknown): IUser|Promise<IUser>
 }
 
-export interface IResourceOptions {
+export interface IResourceOptions <U extends IUser>{
   label?:string
   actions?: (string|IActionInfo)[]
   resourceRoles?:(string|IRole)[]
   resourceRolePermissions?: IPermissionList
-  getRoles?: IGetRoles
+  getRoles?: IGetRoles<U>
 }
 
-export interface IResource {
+export interface IResource <U extends IUser>{
   name: string,
-  options?: IResourceOptions
+  options?: IResourceOptions<U>
 }
 
 export interface ISerializedResource {
@@ -28,14 +28,14 @@ export interface ISerializedResource {
   resourceRolePermissions?: ISerializedPermission[]
 }
 
-class Resource {
+class Resource <U extends IUser> {
   label: string
   actions?: IActions
   resourceRoles?: IRoles
   resourceRolePermissions?: Permissions
-  getRoles: IGetRoles
+  getRoles: IGetRoles<U>
 
-  constructor (public name:string, options?: IResourceOptions) {
+  constructor (public name:string, options?: IResourceOptions<U>) {
     this.label = options?.label || this.name
 
     if (options?.actions) {
@@ -111,8 +111,8 @@ class Resource {
   }
 }
 
-export interface IResources {
-  [resource: string]: Resource
+export interface IResources <U extends IUser>{
+  [resource: string]: Resource<U>
 }
 
 export default Resource

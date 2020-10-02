@@ -1,11 +1,9 @@
 # README
-We started to build this library because my team needed a permission library that could evaluate the permissions of a user based on his/her role in the application and with respect to the resource taken into consideration.
+We started to build this library because our team needed a permission library that could evaluate the permissions of a user based on his/her role in the application and with respect to the resource taken into consideration.
 
-Let's take an example. Consider we should build a ticketing system in an application with these requirements:
+For example let's consider we should build a ticketing system in an application with these requirements:
   - user has one or more Roles among: Owner, Member, Customer
   - every ticket has an author, an assignee and 0 or more watchers
-  - every ticket could have one or more comments
-  - every ticket could have one or more attachments
   - ticket can be assigned to one user
 
 We can immediately see that every user has a Role in the application (Owner, Member or Customer) and one or more roles with respect to the ticket; we want to define permissions based on all.

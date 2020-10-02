@@ -1,10 +1,10 @@
-import Core, { ICheck } from './Core'
-import IUser from './IUser'
-import Role, { IRole, IRoles } from './Role'
-import Resource, { IResource, IResourceOptions } from './Resource'
-import Permissions, { ISytemPermissions, ISerializedPermission, ISytemPermissionList, IPermissionCheck, ANY } from './Permission'
+import Core, { ICheck } from './lib/Core'
+import IUser from './lib/IUser'
+import Role, { IRole, IRoles } from './lib/Role'
+import Resource, { IResource, IResourceOptions } from './lib/Resource'
+import Permissions, { ISytemPermissions, ISerializedPermission, ISytemPermissionList, IPermissionCheck, ANY } from './lib/Permission'
 
-const core:Core = new Core()
+const core:Core<IUser> = new Core()
 
 export default core
 

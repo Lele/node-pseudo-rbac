@@ -19,9 +19,9 @@ export interface ICheck {
   attributes: string[]
 }
 
-class Core {
+class Core <U extends IUser> {
   roles:IRoles
-  resources:IResources
+  resources:IResources<U>
   permissions?:ISytemPermissions
 
   constructor () {
@@ -56,7 +56,7 @@ class Core {
     }
   }
 
-  addResource (resource:string|Resource, options?:IResourceOptions):void{
+  addResource (resource:string|Resource<U>, options?:IResourceOptions<U>):void{
     if (typeof resource === 'string') {
       this.resources[resource] = new Resource(resource, options)
     } else {
@@ -64,7 +64,7 @@ class Core {
     }
   }
 
-  setResources (resources:(string|IResource|Resource)[]):void {
+  setResources (resources:(string|IResource<U>|Resource<U>)[]):void {
     this.resources = {}
 
     for (const resourceInfo of resources) {
@@ -172,7 +172,7 @@ class Core {
     return outJson
   }
 
-  async can (user:IUser, action: string, resourceName:string, resourceObj?:unknown):Promise<boolean|ICheck> {
+  async can (user:U, action: string, resourceName:string, resourceObj?:unknown):Promise<boolean|ICheck> {
     let { roles, resourceRoles } = user
     if (this.permissions) {
       const resourcePermission = this.permissions[resourceName]

@@ -1,4 +1,4 @@
-import core from '../core'
+import core from '../index'
 
 core.addRole('owner')
 core.addRole('member', 'Member')
@@ -115,6 +115,10 @@ const ticket = {
   watchers: [1]
 }
 
-const res = core.can(user, 'read', 'ticket', ticket)
+const run = async () => {
+  const res = await core.can(user, 'read', 'ticket', ticket)
 
-console.log(res)
+  console.log(res)
+}
+
+run()
