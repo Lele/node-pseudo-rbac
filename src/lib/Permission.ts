@@ -34,7 +34,7 @@ export interface IPermissionCheck {
 }
 
 class Permissions {
-  constructor (public resource:string, public resourceRolePermissions: boolean, public permissionObject: IPermissionList) {}
+  constructor (public resource:string, public resourceRolePermissions: boolean, public permissionObject: IPermissionList = {}) {}
 
   can (action: string, role: string, resourceRole?:string, defaultResRolePermissions?:Permissions): false|IPermissionCheck {
     const rolePermissions = this.permissionObject[role]
@@ -103,27 +103,19 @@ class Permissions {
       this.permissionObject = {}
     }
 
-    // if no permission is defined for the current resource then simply insert the definition
-    if (this.permissionObject && !(permission.resource in this.permissionObject)) {
-      this.permissionObject[permission.resource] = {
-        [permission.resource]: {
-          [permission.role]: {
-            [permission.action]: !permission.resourceRole ? permission.value : {
-              [permission.resourceRole]: permission.value
-            }
-          }
-        }
-      }
-      return
-    }
-
-    const resourcePermissions = this.permissionObject[permission.resource]
+    const resourcePermissions = this.permissionObject
 
     // if no permission is defined for the current role then insert the definition
     if (!(permission.role in resourcePermissions)) {
-      resourcePermissions[permission.role] = {
-        [permission.action]: !permission.resourceRole ? permission.value : {
-          [permission.resourceRole]: permission.value
+      if (permission.resourceRole) {
+        resourcePermissions[permission.role] = {
+          [permission.action]: {
+            [permission.resourceRole]: permission.value
+          }
+        }
+      } else {
+        resourcePermissions[permission.role] = {
+          [permission.action]: permission.value
         }
       }
     } else {
@@ -131,14 +123,18 @@ class Permissions {
       if (permission.action in resourcePermissions[permission.role]) {
         // if it is defined and is a boolean or an array of string then overwrite it
         if (typeof resourcePermissions[permission.role][permission.action] === 'boolean' || Array.isArray(resourcePermissions[permission.role][permission.action])) {
-          resourcePermissions[permission.role][permission.action] = !permission.resourceRole ? permission.value : {
-            [permission.resourceRole]: permission.value
+          if (permission.resourceRole) {
+            resourcePermissions[permission.role][permission.action] = !permission.resourceRole ? permission.value : {
+              [permission.resourceRole]: permission.value
+            }
+          } else {
+            resourcePermissions[permission.role][permission.action] = permission.value
           }
         } else {
           // if it is an object check the new permission
           if (permission.resourceRole) {
             resourcePermissions[permission.role][permission.action] = {
-              ...resourcePermissions[permission.role][permission.action] as IComplexPermission,
+              ...resourcePermissions[permission.role][permission.action] as IPermission,
               [permission.resourceRole]: permission.value
             }
           } else {

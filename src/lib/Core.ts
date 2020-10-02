@@ -81,7 +81,25 @@ class Core {
   }
 
   setPermission (permission: ISerializedPermission):void{
-    this.permissions.setPermission(permission)
+    if (!this.roles || !(permission.role in this.roles)) {
+      throw Error(`No role found with name: ${permission.role}`)
+    }
+    if (!this.resources || !(permission.resource in this.resources)) {
+      throw Error(`No resource found with name: ${permission.resource}`)
+    }
+    if (permission.resourceRole && (this.resources && !this.resources[permission.resource].hasResourceRole(permission.resourceRole))) {
+      throw Error(`No resource role found with name ${permission.resourceRole} in ${permission.resource} resource`)
+    }
+
+    if (!this.permissions) {
+      this.permissions = {}
+    }
+
+    if (!(permission.resource in this.permissions)) {
+      this.permissions[permission.resource] = new Permissions(permission.resource, false)
+    }
+
+    this.permissions[permission.resource].setPermission(permission)
   }
 
   setPermissions (permissions:ISytemPermissionList):void{
