@@ -116,9 +116,11 @@ const ticket = {
 }
 
 const run = async () => {
-  const res = await core.can(user, 'read', 'ticket', ticket)
+  const resCan = await core.can(user, 'read', 'ticket', ticket)
+  const resCould = await core.could(user, 'ticket', ticket)
 
-  console.log(res)
+  console.log(resCan)
+  console.log(resCould)
 }
 
 run()

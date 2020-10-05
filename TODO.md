@@ -5,3 +5,4 @@
 - [x] implement setPermission
 - [ ] pre and post permission middleware linked by resource name:
   - user can define a pre (or post) 'ticket' function to be executed before (or after) every 'ticket' permission check
+- [ ] extract resource-list filters for each role of a user to query the database

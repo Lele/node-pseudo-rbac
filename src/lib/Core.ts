@@ -19,6 +19,10 @@ export interface ICheck {
   attributes: string[]
 }
 
+export interface IChecks {
+  [action:string]:boolean|ICheck
+}
+
 class Core <U extends IUser> {
   roles:IRoles
   resources:IResources<U>
@@ -172,9 +176,70 @@ class Core <U extends IUser> {
     return outJson
   }
 
+  async could (user:U, resourceName:string, resourceObj?:unknown):Promise<IChecks> {
+    let { roles, resourceRoles } = user
+    const { actions } = this.resources[resourceName]
+    const out:IChecks = {}
+    if (this.permissions && actions) {
+      const resourcePermission = this.permissions[resourceName]
+      for (const action of Object.keys(actions)) {
+        for (const role of roles) {
+          const permissionRes = resourcePermission.can(action, role)
+          if (permissionRes && permissionRes.value === ANY) {
+            out[action] = {
+              matches: [permissionRes],
+              value: ANY,
+              attributes: ['*']
+            }
+          }
+        }
+
+        if (!out[action]) {
+          if (resourceObj && this.resources && this.resources[resourceName]) {
+            ({ roles, resourceRoles } = await this.resources[resourceName].getRoles(user, resourceObj))
+          } else if (!resourceObj) {
+            resourceRoles = Object.keys(this.resources[resourceName].resourceRoles || {})
+          }
+
+          const matches: IPermissionCheck[] = []
+          const attributes: string[] = []
+
+          for (const role of roles) {
+            if (resourceRoles.length > 0) {
+              for (const resourceRole of resourceRoles) {
+                const permissionValue = resourcePermission.can(action, role, resourceRole, this.resources[resourceName].resourceRolePermissions)
+                if (permissionValue) {
+                  matches.push(permissionValue)
+                  attributes.push(...permissionValue.attributes)
+                }
+              }
+            } else {
+              const permissionValue = resourcePermission.can(action, role, undefined, this.resources[resourceName].resourceRolePermissions)
+              if (permissionValue) {
+                matches.push(permissionValue)
+                attributes.push(...permissionValue.attributes)
+              }
+            }
+          }
+
+          if (matches.length === 0) {
+            out[action] = false
+          } else {
+            out[action] = {
+              matches,
+              value: true,
+              attributes: Glob.normalize(attributes) as string[]
+            }
+          }
+        }
+      }
+    }
+    return out
+  }
+
   async can (user:U, action: string, resourceName:string, resourceObj?:unknown):Promise<boolean|ICheck> {
     let { roles, resourceRoles } = user
-    if (this.permissions) {
+    if (this.permissions && this.resources && this.resources[resourceName]) {
       const resourcePermission = this.permissions[resourceName]
       for (const role of roles) {
         const permissionRes = resourcePermission.can(action, role)
@@ -187,8 +252,10 @@ class Core <U extends IUser> {
         }
       }
 
-      if (resourceObj && this.resources && this.resources[resourceName]) {
-        ({ roles, resourceRoles } = await this.resources[resourceName]?.getRoles(user, resourceObj))
+      if (resourceObj) {
+        ({ roles, resourceRoles } = await this.resources[resourceName].getRoles(user, resourceObj))
+      } else if (!resourceObj) {
+        resourceRoles = Object.keys(this.resources[resourceName].resourceRoles || {})
       }
 
       const matches: IPermissionCheck[] = []
