@@ -151,7 +151,7 @@ rbac.setPermissions({
 ```
 
 ### Configure `rbac`
-Import your project main file import the previously created configurations
+Import your project main file import the previously created configuration files
 ```js
 require('roles.js')
 require('ticket.js')
