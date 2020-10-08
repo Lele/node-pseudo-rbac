@@ -1,12 +1,14 @@
-import core from '../index'
+import Rbac from '../index'
 
-core.addRole('owner')
-core.addRole('member', 'Member')
-core.addRole('customer', 'Customer')
+rbac = new Rbac()
 
-core.setRoles(['owner', { name: 'member', label: 'Member' }, 'customer'])
+rbac.addRole('owner')
+rbac.addRole('member', 'Member')
+rbac.addRole('customer', 'Customer')
 
-core.addResource('ticket', {
+rbac.setRoles(['owner', { name: 'member', label: 'Member' }, 'customer'])
+
+rbac.addResource('ticket', {
   actions: ['read', 'assign', 'comment'],
   resourceRoles: ['author', 'watcher', 'assignee'],
   resourceRolePermissions: {
@@ -43,7 +45,7 @@ core.addResource('ticket', {
   }
 })
 
-core.setResources([
+rbac.setResources([
   {
     name: 'ticket',
     options: {
@@ -85,7 +87,7 @@ core.setResources([
   }
 ])
 
-core.setPermissions({
+rbac.setPermissions({
   ticket: {
     owner: {
       read: true,
@@ -100,7 +102,7 @@ core.setPermissions({
   }
 })
 
-console.log(core.toJSON())
+console.log(rbac.toJSON())
 
 const user = {
   roles: ['customer'],
@@ -116,8 +118,8 @@ const ticket = {
 }
 
 const run = async () => {
-  const resCan = await core.can(user, 'read', 'ticket', ticket)
-  const resCould = await core.could(user, 'ticket', ticket)
+  const resCan = await rbac.can(user, 'read', 'ticket', ticket)
+  const resCould = await rbac.could(user, 'ticket', ticket)
 
   console.log(resCan)
   console.log(resCould)

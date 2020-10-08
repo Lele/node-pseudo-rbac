@@ -3,8 +3,9 @@
     "target": "es5",
     "module": "commonjs",
     "lib": ["es6"],
+    "declaration":true,
     "allowJs": true,
-    "outDir": "build",
+    "outDir": "lib",
     "rootDir": "src",
     "strict": true,
     "noImplicitAny": true,
@@ -15,10 +16,11 @@
     "typeRoots": [ "./types", "./node_modules/@types"]
   },
   "exclude": [
-    "build",
+    "lib",
     "node_modules",
     "coverage",
     "types",
-    "**/__tests__/*"
+    "**/__tests__/*",
+    "src/examples/*"
   ]
 }

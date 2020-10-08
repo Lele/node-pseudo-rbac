@@ -2,7 +2,7 @@
   "name": "express-rbac",
   "version": "0.0.1",
   "description": "role based access control for nodejs",
-  "main": "index.js",
+  "main": "lib/index.js",
   "dependencies": {
     "notation": "^2.0.0"
   },
@@ -21,18 +21,22 @@
     "ts-jest": "^26.4.1",
     "typescript": "^4.0.3"
   },
+  "directories": {
+    "lib": "./lib"
+  },
   "files": [
-    "src/lib/**/*"
+    "lib/**/*",
+    "LICENSE"
   ],
   "scripts": {
     "test": "jest --config jestconfig.json --silent=false --verbose=true --runInBand",
     "build": "npx tsc",
-    "prepare" : "npm run build",
+    "prepare": "npm run build",
     "lint": "eslint",
-    "prepublishOnly" : "npm test && npm run lint",
-    "preversion" : "npm run lint",
-    "version" : "git add -A src",
-    "postversion" : "git push && git push --tags"
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "author": "uannaB",
   "license": "ISC"

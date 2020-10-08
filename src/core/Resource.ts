@@ -3,8 +3,9 @@ import Role, { IRole, IRoles } from './Role'
 import IUser from './IUser'
 import Permissions, { ISerializedPermission, IPermissionList } from './Permission'
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export interface IGetRoles <U extends IUser>{
-  (user: U, ticket: unknown): IUser|Promise<IUser>
+  (user: U, ticket: any): IUser|Promise<IUser>
 }
 
 export interface IResourceOptions <U extends IUser>{
@@ -67,7 +68,17 @@ class Resource <U extends IUser> {
     if (options?.getRoles) {
       this.getRoles = options.getRoles
     } else {
-      this.getRoles = (user: IUser):IUser|Promise<IUser> => { return user }
+      this.getRoles = (user: U):IUser|Promise<IUser> => {
+        let { roles, resourceRoles } = user
+
+        if (!resourceRoles) {
+          resourceRoles = this.resourceRoles ? Object.keys(this.resourceRoles) : []
+        }
+        return {
+          roles,
+          resourceRoles
+        }
+      }
     }
   }
 

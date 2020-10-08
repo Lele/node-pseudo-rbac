@@ -1,6 +1,6 @@
 interface IUser{
   roles: string[]
-  resourceRoles: string[]
+  resourceRoles?: string[]
 }
 
 export default IUser

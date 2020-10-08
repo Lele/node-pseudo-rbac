@@ -23,7 +23,21 @@ export interface IChecks {
   [action:string]:boolean|ICheck
 }
 
-class Core <U extends IUser> {
+interface INextFunction{
+  ():void
+}
+
+interface IRequest<U extends IUser>{
+  user: U,
+  permissionRes?: boolean|ICheck
+  [key: string]: unknown
+}
+
+interface IMiddleware<U extends IUser> {
+  (req: IRequest<U>, res:unknown, next:INextFunction):Promise<void>
+}
+
+class Rbac <U extends IUser> {
   roles:IRoles
   resources:IResources<U>
   permissions?:ISytemPermissions
@@ -205,7 +219,7 @@ class Core <U extends IUser> {
           const attributes: string[] = []
 
           for (const role of roles) {
-            if (resourceRoles.length > 0) {
+            if (resourceRoles && resourceRoles.length > 0) {
               for (const resourceRole of resourceRoles) {
                 const permissionValue = resourcePermission.can(action, role, resourceRole, this.resources[resourceName].resourceRolePermissions)
                 if (permissionValue) {
@@ -262,7 +276,7 @@ class Core <U extends IUser> {
       const attributes: string[] = []
 
       for (const role of roles) {
-        if (resourceRoles.length > 0) {
+        if (resourceRoles && resourceRoles.length > 0) {
           for (const resourceRole of resourceRoles) {
             const permissionValue = resourcePermission.can(action, role, resourceRole, this.resources[resourceName].resourceRolePermissions)
             if (permissionValue) {
@@ -289,6 +303,18 @@ class Core <U extends IUser> {
     }
     return false
   }
+
+  canMiddleware (action: string, resource:string): IMiddleware<U> {
+    return async (req: IRequest<U>, res: unknown, next:INextFunction) => {
+      if (!('user' in req)) {
+        throw Error('req.user must be defined')
+      } else if ((!('roles' in req.user)) || !Array.isArray(req.user.roles)) {
+        throw Error('req.user.roles must be defined as the list of the user-role names')
+      }
+      req.permissionRes = await this.can(req.user, action, resource, req[resource])
+      next()
+    }
+  }
 }
 
-export default Core
+export default Rbac

@@ -33,15 +33,8 @@ Our ticket library let the user define:
 First, we want to define user roles. Create a new file *roles.js* and insert the code that will define roles and their correspondent labels:
 
 ```js
-  const rbac = require('express-rbac')
-
-  // roles as an array of strings
-  let roles = ['owner', 'member', 'customer']
-
-  rbac.setRoles(roles)
-
   // roles as an array of objects defining the name and the label of each one
-  roles = [{
+  const roles = [{
     name: 'owner',
     label: 'Owner'
   }, {
@@ -52,13 +45,7 @@ First, we want to define user roles. Create a new file *roles.js* and insert the
     label: 'Customer'
   }]
 
-  rbac.setRoles(roles)
-
-  // adding each role with the addRole function
-
-  rbac.addRole('owner')
-
-  rbac.addRole('member', 'Member')
+  module.exports = roles
 
 ```
 
@@ -73,13 +60,12 @@ For each resource we have to explicitly write:
 Let's create a new file *ticket.js* and define resource roles permissions such that `author`s, `watcher`s and `assignee`s can `read` and `comment` tickets.
 
 ```js
-  const rbac = require('express-rbac')
-
   // always define resources with actions
   // if the user can assume particular roles with respect to the resource you have to specify resource-roles
   // at this point you need to define a function that returns user roles and user resource-roles
   // if you specify resource-roles you probably want to specify generic resource-role permissions for every action
-  rbac.addResource("ticket", {
+  module.exports = {
+    name:'ticket',
     resourceRoles: ['author', 'watcher', 'assignee'],
     actions: ['read', 'assign', 'comment'],
     resourceRolePermissions: {
@@ -125,9 +111,9 @@ Possible values for each permission are:
 
 let's create a *permissions.js* file
 ```js
-const rbac, { ANY } = require('express-rbac')
+const { ANY } = require('express-rbac')
 
-rbac.setPermissions({
+module.exports = {
   ticket: {
     owner: {
     // owners can read, assign and comment regardless their role in the ticket
@@ -147,20 +133,29 @@ rbac.setPermissions({
       comment: false
     }
   }
-})
+}
 ```
 
 ### Configure `rbac`
-in your project main file, import the previously created configuration files
+now we have to configure the rbac instance with all the created conf. Let's do this in a *rbac.js* file
 ```js
-require('./roles')
-require('./ticket')
-require('./permissions')
+const Rbac = require('express-rbac')
+const roles = require('./roles')
+const ticket = require('./ticket')
+const permissions = require('./permissions')
+
+const rbac = new Rbac()
+
+rbac.setRoles(roles)
+rbac.addResource(ticket)
+rbac.setPermissions(Permissions)
+
+module.exports = rbac
 ```
 
 ### Apply the Permission **MIDDLEWARE**
 ```js
-  const rbac = require('express-rbac')
+  const rbac = require('./rbac')
   const express = require('express');
 
   const app = express()

@@ -1,10 +1,11 @@
-import rbac from '../index'
-import {ICheck} from '../lib/Core'
-import {initializePermissions} from './fixtures'
+import Rbac from '../index'
+import {ICheck} from '../core/Rbac'
+import {initializePermissions, IAppUser} from './fixtures'
 
+let rbac = new Rbac<IAppUser>()
 
 beforeEach(() => {
-  initializePermissions()
+  initializePermissions(rbac)
 })
 
 test('watcher can read', async () => {

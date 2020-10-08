@@ -1,7 +1,7 @@
-import rbac from '../index'
-import IUser from '../lib/IUser'
+import Rbac from '../index'
+import IUser from '../core/IUser'
 
-interface AppUser extends IUser{
+export interface IAppUser extends IUser{
   id?:number
 }
 
@@ -11,7 +11,7 @@ interface AppTicket {
   assignee: number
 }
 
-export const initializePermissions = () => {
+export const initializePermissions = (rbac: Rbac<IAppUser>) => {
   rbac.addRole('owner')
   rbac.addRole('member', 'Member')
   rbac.addRole('customer', 'Customer')
@@ -35,7 +35,7 @@ export const initializePermissions = () => {
         comment: true
       }
     },
-    getRoles: (user:AppUser, ticket:AppTicket):IUser => {
+    getRoles: (user:IAppUser, ticket:AppTicket):IUser => {
       const roles = user.roles
       const resourceRoles = []
 
