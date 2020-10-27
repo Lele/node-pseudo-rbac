@@ -16,11 +16,11 @@
     "typeRoots": [ "./types", "./node_modules/@types"]
   },
   "exclude": [
-    "lib",
+    "lib/*",
     "node_modules",
     "coverage",
     "types",
-    "**/__tests__/*",
+    "src/__tests__/*",
     "src/examples/*"
   ]
 }

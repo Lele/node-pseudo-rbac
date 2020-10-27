@@ -1,8 +1,8 @@
 import Rbac from '../index'
-import {ICheck} from '../core/Rbac'
-import {initializePermissions, IAppUser} from './fixtures'
+import { ICheck } from '../core/Rbac'
+import { initializePermissions } from './fixtures'
 
-let rbac = new Rbac<IAppUser>()
+const rbac = new Rbac()
 
 beforeEach(() => {
   initializePermissions(rbac)
@@ -47,7 +47,6 @@ test('customer cannot read any ticket', async () => {
 test('customer cannot comment', async () => {
   const user = {
     roles: ['customer'],
-    resourceRoles: [],
     id: 1
   }
   const ticket = {
@@ -64,7 +63,6 @@ test('customer cannot comment', async () => {
 test('user without roles cannot read anything', async () => {
   const user = {
     roles: [],
-    resourceRoles: [],
     id: 1
   }
   const ticket = {
@@ -76,4 +74,16 @@ test('user without roles cannot read anything', async () => {
   }
   const permissionValue:boolean = await rbac.can(user, 'read', 'ticket', ticket) as boolean
   expect(permissionValue).toBe(false)
+})
+
+test('get filters', async () => {
+  const user = {
+    roles: ['customer'],
+    id: 1
+  }
+
+  const filters:unknown[]|boolean = await rbac.getFilters(user, 'ticket')
+  expect(filters).toStrictEqual([{ author: user.id },
+    { watchers: user.id },
+    { assignee: user.id }])
 })

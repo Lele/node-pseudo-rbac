@@ -4,21 +4,21 @@ import IUser from './IUser'
 import Permissions, { ISerializedPermission, IPermissionList } from './Permission'
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-export interface IGetRoles <U extends IUser>{
-  (user: U, ticket: any): IUser|Promise<IUser>
+export interface IGetRoles{
+  (user: IUser, resource?: unknown): IUser|Promise<IUser>
 }
 
-export interface IResourceOptions <U extends IUser>{
+export interface IResourceOptions{
   label?:string
   actions?: (string|IActionInfo)[]
   resourceRoles?:(string|IRole)[]
   resourceRolePermissions?: IPermissionList
-  getRoles?: IGetRoles<U>
+  getRoles?: IGetRoles
 }
 
-export interface IResource <U extends IUser>{
+export interface IResource{
   name: string,
-  options?: IResourceOptions<U>
+  options?: IResourceOptions
 }
 
 export interface ISerializedResource {
@@ -29,14 +29,14 @@ export interface ISerializedResource {
   resourceRolePermissions?: ISerializedPermission[]
 }
 
-class Resource <U extends IUser> {
+class Resource {
   label: string
   actions?: IActions
   resourceRoles?: IRoles
   resourceRolePermissions?: Permissions
-  getRoles: IGetRoles<U>
+  getRoles: IGetRoles
 
-  constructor (public name:string, options?: IResourceOptions<U>) {
+  constructor (public name:string, options?: IResourceOptions) {
     this.label = options?.label || this.name
 
     if (options?.actions) {
@@ -55,7 +55,7 @@ class Resource <U extends IUser> {
         if (typeof roleItem === 'string') {
           aggr[roleItem] = new Role(roleItem)
         } else {
-          aggr[roleItem.name] = new Role(roleItem.name, roleItem.label)
+          aggr[roleItem.name] = new Role(roleItem.name, roleItem.label, roleItem.description, roleItem.resourceFilterGetters)
         }
         return aggr
       }, {})
@@ -68,11 +68,11 @@ class Resource <U extends IUser> {
     if (options?.getRoles) {
       this.getRoles = options.getRoles
     } else {
-      this.getRoles = (user: U):IUser|Promise<IUser> => {
+      this.getRoles = (user: IUser):IUser|Promise<IUser> => {
         let { roles, resourceRoles } = user
 
         if (!resourceRoles) {
-          resourceRoles = this.resourceRoles ? Object.keys(this.resourceRoles) : []
+          resourceRoles = this.resourceRoles ? Object.keys(this.resourceRoles) : undefined
         }
         return {
           roles,
@@ -104,6 +104,24 @@ class Resource <U extends IUser> {
     return !!this.actions && actionName in this.actions
   }
 
+  getResourceRoleFilters (user:IUser, resourceRoles?:string[]):unknown[] {
+    if (!this.resourceRoles) {
+      return []
+    }
+
+    if (!resourceRoles) {
+      resourceRoles = Object.keys(this.resourceRoles || {})
+    }
+
+    const outFilters = []
+
+    for (const resRole of resourceRoles) {
+      outFilters.push(...this.resourceRoles[resRole].getFilters(user, this.name))
+    }
+
+    return outFilters
+  }
+
   toJSON (): ISerializedResource {
     return {
       name: this.name,
@@ -122,8 +140,8 @@ class Resource <U extends IUser> {
   }
 }
 
-export interface IResources <U extends IUser>{
-  [resource: string]: Resource<U>
+export interface IResources{
+  [resource: string]: Resource
 }
 
 export default Resource

@@ -1,5 +1,6 @@
 import Rbac from '../index'
 import IUser from '../core/IUser'
+import { IGetRoles } from '../core/Resource'
 
 export interface IAppUser extends IUser{
   id?:number
@@ -11,7 +12,26 @@ interface AppTicket {
   assignee: number
 }
 
-export const initializePermissions = (rbac: Rbac<IAppUser>) => {
+const getRoles = (user:IAppUser, ticket:AppTicket):IUser => {
+  const roles = user.roles
+  const resourceRoles = []
+
+  if (ticket.watchers.includes(user.id as number)) {
+    resourceRoles.push('watcher')
+  }
+  if (ticket.author === user.id as number) {
+    resourceRoles.push('author')
+  }
+  if (ticket.assignee === user.id as number) {
+    resourceRoles.push('assignee')
+  }
+  return {
+    roles,
+    resourceRoles
+  }
+}
+
+export const initializePermissions = (rbac: Rbac):void => {
   rbac.addRole('owner')
   rbac.addRole('member', 'Member')
   rbac.addRole('customer', 'Customer')
@@ -20,7 +40,28 @@ export const initializePermissions = (rbac: Rbac<IAppUser>) => {
 
   rbac.addResource('ticket', {
     actions: ['read', 'assign', 'comment'],
-    resourceRoles: ['author', 'watcher', 'assignee'],
+    resourceRoles: [{
+      name: 'author',
+      resourceFilterGetters: {
+        ticket: (user:IAppUser) => {
+          return [{ author: user.id }]
+        }
+      }
+    }, {
+      name: 'watcher',
+      resourceFilterGetters: {
+        ticket: (user:IAppUser) => {
+          return [{ watchers: user.id }]
+        }
+      }
+    }, {
+      name: 'assignee',
+      resourceFilterGetters: {
+        ticket: (user:IAppUser) => {
+          return [{ assignee: user.id }]
+        }
+      }
+    }],
     resourceRolePermissions: {
       author: {
         read: true,
@@ -35,24 +76,7 @@ export const initializePermissions = (rbac: Rbac<IAppUser>) => {
         comment: true
       }
     },
-    getRoles: (user:IAppUser, ticket:AppTicket):IUser => {
-      const roles = user.roles
-      const resourceRoles = []
-
-      if (ticket.watchers.includes(user.id as number)) {
-        resourceRoles.push('watcher')
-      }
-      if (ticket.author === user.id as number) {
-        resourceRoles.push('author')
-      }
-      if (ticket.assignee === user.id as number) {
-        resourceRoles.push('assignee')
-      }
-      return {
-        roles,
-        resourceRoles
-      }
-    }
+    getRoles: (getRoles as IGetRoles)
   })
 
   rbac.setPermissions({
@@ -67,8 +91,8 @@ export const initializePermissions = (rbac: Rbac<IAppUser>) => {
           author: true
         }
       },
-      customer:{
-        comment:false
+      customer: {
+        comment: false
       }
     }
   })

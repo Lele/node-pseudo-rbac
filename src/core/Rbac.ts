@@ -1,5 +1,5 @@
 import Resource, { IResource, IResources, IResourceOptions, ISerializedResource } from './Resource'
-import Role, { IRole, IRoles } from './Role'
+import Role, { IRole, IRoles, IResourceFilters } from './Role'
 import IUser from './IUser'
 import Permissions, { ISytemPermissions, ISerializedPermission, ISytemPermissionList, IPermissionCheck, ANY } from './Permission'
 
@@ -27,19 +27,19 @@ interface INextFunction{
   ():void
 }
 
-interface IRequest<U extends IUser>{
-  user: U,
+interface IRequest{
+  user: IUser,
   permissionRes?: boolean|ICheck
   [key: string]: unknown
 }
 
-interface IMiddleware<U extends IUser> {
-  (req: IRequest<U>, res:unknown, next:INextFunction):Promise<void>
+interface IMiddleware{
+  (req: IRequest, res:unknown, next:INextFunction):Promise<void>
 }
 
-class Rbac <U extends IUser> {
+class Rbac {
   roles:IRoles
-  resources:IResources<U>
+  resources:IResources
   permissions?:ISytemPermissions
 
   constructor () {
@@ -48,10 +48,10 @@ class Rbac <U extends IUser> {
     this.permissions = undefined
   }
 
-  addRole (role:string|Role, label?:string, description?:string):void{
+  addRole (role:string|Role, label?:string, description?:string, resourceFilterGetters?:IResourceFilters):void{
     if (typeof role === 'string') {
       this.checkRoleName(role)
-      this.roles[role] = new Role(role, label, description)
+      this.roles[role] = new Role(role, label, description, resourceFilterGetters)
     } else {
       this.checkRoleName(role.name)
       this.roles[role.name] = role
@@ -74,7 +74,7 @@ class Rbac <U extends IUser> {
     }
   }
 
-  addResource (resource:string|Resource<U>, options?:IResourceOptions<U>):void{
+  addResource (resource:string|Resource, options?:IResourceOptions):void{
     if (typeof resource === 'string') {
       this.resources[resource] = new Resource(resource, options)
     } else {
@@ -82,7 +82,7 @@ class Rbac <U extends IUser> {
     }
   }
 
-  setResources (resources:(string|IResource<U>|Resource<U>)[]):void {
+  setResources (resources:(string|IResource|Resource)[]):void {
     this.resources = {}
 
     for (const resourceInfo of resources) {
@@ -190,8 +190,8 @@ class Rbac <U extends IUser> {
     return outJson
   }
 
-  async could (user:U, resourceName:string, resourceObj?:unknown):Promise<IChecks> {
-    let { roles, resourceRoles } = user
+  async could (user:IUser, resourceName:string, resourceObj?:unknown):Promise<IChecks> {
+    let { roles } = user
     const { actions } = this.resources[resourceName]
     const out:IChecks = {}
     if (this.permissions && actions) {
@@ -209,40 +209,47 @@ class Rbac <U extends IUser> {
         }
 
         if (!out[action]) {
-          if (resourceObj && this.resources && this.resources[resourceName]) {
+          let resourceRoles: undefined|string[] = []
+
+          if (resourceObj) {
             ({ roles, resourceRoles } = await this.resources[resourceName].getRoles(user, resourceObj))
           } else if (!resourceObj) {
             resourceRoles = Object.keys(this.resources[resourceName].resourceRoles || {})
           }
 
-          const matches: IPermissionCheck[] = []
-          const attributes: string[] = []
+          // if the resource has resource-roles but the user is not connected to it then return false
+          if (this.resources[resourceName].resourceRoles && (!resourceRoles || resourceRoles.length === 0)) {
+            out[action] = false
+          } else {
+            const matches: IPermissionCheck[] = []
+            const attributes: string[] = []
 
-          for (const role of roles) {
-            if (resourceRoles && resourceRoles.length > 0) {
-              for (const resourceRole of resourceRoles) {
-                const permissionValue = resourcePermission.can(action, role, resourceRole, this.resources[resourceName].resourceRolePermissions)
+            for (const role of roles) {
+              if (resourceRoles && resourceRoles.length > 0) {
+                for (const resourceRole of resourceRoles) {
+                  const permissionValue = resourcePermission.can(action, role, resourceRole, this.resources[resourceName].resourceRolePermissions)
+                  if (permissionValue) {
+                    matches.push(permissionValue)
+                    attributes.push(...permissionValue.attributes)
+                  }
+                }
+              } else {
+                const permissionValue = resourcePermission.can(action, role, undefined, this.resources[resourceName].resourceRolePermissions)
                 if (permissionValue) {
                   matches.push(permissionValue)
                   attributes.push(...permissionValue.attributes)
                 }
               }
-            } else {
-              const permissionValue = resourcePermission.can(action, role, undefined, this.resources[resourceName].resourceRolePermissions)
-              if (permissionValue) {
-                matches.push(permissionValue)
-                attributes.push(...permissionValue.attributes)
-              }
             }
-          }
 
-          if (matches.length === 0) {
-            out[action] = false
-          } else {
-            out[action] = {
-              matches,
-              value: true,
-              attributes: Glob.normalize(attributes) as string[]
+            if (matches.length === 0) {
+              out[action] = false
+            } else {
+              out[action] = {
+                matches,
+                value: true,
+                attributes: Glob.normalize(attributes) as string[]
+              }
             }
           }
         }
@@ -251,8 +258,8 @@ class Rbac <U extends IUser> {
     return out
   }
 
-  async can (user:U, action: string, resourceName:string, resourceObj?:unknown):Promise<boolean|ICheck> {
-    let { roles, resourceRoles } = user
+  async can (user:IUser, action: string, resourceName:string, resourceObj?:unknown):Promise<false|ICheck> {
+    let { roles } = user
     if (this.permissions && this.resources && this.resources[resourceName]) {
       const resourcePermission = this.permissions[resourceName]
       for (const role of roles) {
@@ -266,10 +273,17 @@ class Rbac <U extends IUser> {
         }
       }
 
+      let resourceRoles: undefined|string[] = []
+
       if (resourceObj) {
         ({ roles, resourceRoles } = await this.resources[resourceName].getRoles(user, resourceObj))
       } else if (!resourceObj) {
         resourceRoles = Object.keys(this.resources[resourceName].resourceRoles || {})
+      }
+
+      // if the resource has resource-roles but the user is not connected to it then return false
+      if (this.resources[resourceName].resourceRoles && (!resourceRoles || resourceRoles.length === 0)) {
+        return false
       }
 
       const matches: IPermissionCheck[] = []
@@ -304,14 +318,55 @@ class Rbac <U extends IUser> {
     return false
   }
 
-  canMiddleware (action: string, resource:string): IMiddleware<U> {
-    return async (req: IRequest<U>, res: unknown, next:INextFunction) => {
+  async getFilters (user:IUser, resourceName:string):Promise<unknown[]|boolean> {
+    let { roles, resourceRoles } = user
+
+    const permission = await this.can(user, 'read', resourceName)
+
+    if (permission === false) {
+      // user cannot read any resource
+      return false
+    }
+    if (permission.value === ANY) {
+      // no filter to apply, user can read any object of this type
+      return []
+    }
+
+    // otherwise apply search for all the filters
+    if (typeof resourceRoles === 'undefined') {
+      resourceRoles = Object.keys(this.resources[resourceName].resourceRoles || {})
+    }
+    const filters: unknown[] = []
+
+    for (const role of roles) {
+      filters.push(...this.roles[role].getFilters(user, resourceName))
+    }
+
+    filters.push(...this.resources[resourceName].getResourceRoleFilters(user, resourceRoles))
+
+    return filters
+  }
+
+  canMiddleware (action: string, resource:string): IMiddleware {
+    return async (req: IRequest, res: unknown, next:INextFunction) => {
       if (!('user' in req)) {
         throw Error('req.user must be defined')
       } else if ((!('roles' in req.user)) || !Array.isArray(req.user.roles)) {
         throw Error('req.user.roles must be defined as the list of the user-role names')
       }
       req.permissionRes = await this.can(req.user, action, resource, req[resource])
+      next()
+    }
+  }
+
+  filtersMiddleware (resource:string): IMiddleware {
+    return async (req: IRequest, res: unknown, next:INextFunction) => {
+      if (!('user' in req)) {
+        throw Error('req.user must be defined')
+      } else if ((!('roles' in req.user)) || !Array.isArray(req.user.roles)) {
+        throw Error('req.user.roles must be defined as the list of the user-role names')
+      }
+      req.permissionFilters = await this.getFilters(req.user, resource)
       next()
     }
   }

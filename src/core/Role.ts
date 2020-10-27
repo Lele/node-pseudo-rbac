@@ -1,7 +1,18 @@
+import IUser from './IUser'
+
+export interface IGetResourceFilter {
+  (user:IUser): unknown[]
+}
+
+export interface IResourceFilters{
+  [resource: string]: IGetResourceFilter
+}
+
 export interface IRole{
   name: string,
   label?: string
   description?: string
+  resourceFilterGetters?:IResourceFilters
 }
 
 export interface IUserRoles {
@@ -12,7 +23,7 @@ export interface IUserRoles {
 class Role {
   public label: string
 
-  constructor (public name:string, label?:string, public description?:string) {
+  constructor (public name:string, label?:string, public description?:string, public resourceFilterGetters?: IResourceFilters) {
     this.label = label || this.name
   }
 
@@ -22,6 +33,13 @@ class Role {
       label: this.label,
       description: this.description
     }
+  }
+
+  getFilters (user:IUser, resource: string):unknown[] {
+    if (this.resourceFilterGetters && this.resourceFilterGetters[resource]) {
+      return this.resourceFilterGetters[resource](user)
+    }
+    return []
   }
 }
 

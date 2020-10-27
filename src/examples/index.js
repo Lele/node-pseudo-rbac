@@ -2,7 +2,7 @@ import Rbac from '../index'
 
 rbac = new Rbac()
 
-rbac.addRole('owner')
+rbac.addRole('owner', 'Owner')
 rbac.addRole('member', 'Member')
 rbac.addRole('customer', 'Customer')
 
