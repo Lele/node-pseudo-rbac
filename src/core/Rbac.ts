@@ -327,6 +327,7 @@ class Rbac {
       // user cannot read any resource
       return false
     }
+
     if (permission.value === ANY) {
       // no filter to apply, user can read any object of this type
       return []
@@ -354,7 +355,13 @@ class Rbac {
       } else if ((!('roles' in req.user)) || !Array.isArray(req.user.roles)) {
         throw Error('req.user.roles must be defined as the list of the user-role names')
       }
-      req.permissionRes = await this.can(req.user, action, resource, req[resource])
+      const permissionRes = await this.can(req.user, action, resource, req[resource])
+
+      if (permissionRes === false) {
+        res.sendStatus(401)
+      }
+
+      req.permissionRes = permissionRes
       next()
     }
   }
@@ -366,7 +373,13 @@ class Rbac {
       } else if ((!('roles' in req.user)) || !Array.isArray(req.user.roles)) {
         throw Error('req.user.roles must be defined as the list of the user-role names')
       }
-      req.permissionFilters = await this.getFilters(req.user, resource)
+      const permissionFilters = await this.getFilters(req.user, resource)
+
+      if (permissionFilter === false) {
+        res.sendStatus(401)
+      }
+
+      req.permissionFilters = permissionFilters
       next()
     }
   }

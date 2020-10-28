@@ -3,7 +3,10 @@
 - [x] change "can" method
 - [x] implement library entry-point
 - [x] implement setPermission
-- [ ] extract resource-list filters for each role of a user to query the database
+- [x] extract resource-list filters for each role of a user to query the database
+- [ ] express explicit integration
 - [ ] Redis cache
 - [ ] Error handling
 - [ ] send 401 status when non permission was found
+- [ ] define the user attribute name (default = 'user')
+- [ ] define error callback

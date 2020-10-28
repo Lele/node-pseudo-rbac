@@ -1,28 +1,45 @@
 # README
 We started to build this library because our team needed a permission library that could evaluate the permissions of a user based on his/her role in the application and with respect to the resource taken into consideration.
 
-For example let's consider we have to build a ticketing system with these requirements:
+In particular the library let you:
+  - define `role`s
+  - define `resource`s and their own specific roles (called `resource-role`s)
+  - define `permission`s for each role and resource-role with respect of each resource
+  - define a list of query-conditions to filter out resources starting from user roles
+  - use express middleware to manage user access on resources
+
+Permission are attribute-based, this means that you can specify a list of resource attributes to limit the effect of an action.
+
+## EXAMPLE
+
+For example, let's consider we have to build a ticketing system with these requirements:
   - user has one or more Roles among: Owner, Member, Customer
   - every ticket has an author, an assignee and 0 or more watchers
   - ticket can be assigned to one user
 
 We can immediately see that every user has a Role in the application (Owner, Member or Customer) and one or more roles with respect to the ticket; we want to define permissions based on all of them.
-For example, let's think about *read*, *assign* and *comment* permissions. For example, we could state that:
+For example, let's think about *read*, *update*, *assign* and *comment* permissions. We could state that:
 
 #### read
   - the Owner can read `ANY` ticket
-  - the Member can read  `ANY` ticket
-  - the Customer can read **only**  tickets in which is involved (i.e. he is either the author or one of the watchers)
+  - a Member can read  `ANY` ticket
+  - a Customer can read **only**  tickets in which is involved (i.e. he is either the author or one of the watchers)
 
 #### assign
   - the Owner can assign `ANY` ticket
-  - Member can assign tickets he/she has created (he/she is the author)
-  - Customer cannot assign tickets
+  - a Member can assign tickets he/she has created (he/she is the author)
+  - a Customer cannot assign tickets
 
 #### comment
   - the Owner can comment `ANY` ticket
   - authors, watchers and assignees can comment their `OWN` tickets
-  - Customers cannot comment any tickets
+  - a Customers cannot comment any tickets
+
+#### update
+  - the Owner can comment `ANY` ticket
+  - authors can update their own tickets
+  - watcher and assignees cannot update tickets
+  - a Member can always update ticket titles in the tickets they are involved in
 
 Our ticket library let the user define:
   - user Roles (Owner, Member, Customer)
@@ -72,6 +89,7 @@ Let's create a new file *ticket.js* and define resource roles permissions such t
       author: {
         read: true,
         comment: true,
+        update: true
       },
       watcher: {
         read: true,
@@ -106,27 +124,29 @@ Let's create a new file *ticket.js* and define resource roles permissions such t
 Finally we can define roles permissions. The permissions-object defines permissions on every resource and role.
 Possible values for each permission are:
 - a `boolean`
-- an array of strings defining on which attributes the user have the permission (especially usefull for read and update permissions)
+- an array of strings defining which attributes the user has the permission on (especially useful for read and update permissions)
 - a `resourceRolePermission` to overwrite generic resource role permissions
 
 let's create a *permissions.js* file
 ```js
-const { ANY } = require('express-rbac')
+const { ANY } = require('express-rbac/core')
 
 module.exports = {
   ticket: {
     owner: {
-    // owners can read, assign and comment regardless their role in the ticket
+    // owners can read, update, assign and comment regardless their role in the ticket
       read: ANY,
       assign: true,
       comment: ANY
+      update: ANY
     },
-    // overwrite generic assign behaviour for Member role
+    // overwrite generic assign and update behaviour for Member role
     member: {
       read: ANY,
       assign: {
         author: true
-      }
+      },
+      update: ['title']
     },
     //Customers cannot comment any ticket
     customer: {
@@ -138,6 +158,7 @@ module.exports = {
 
 ### Configure `rbac`
 now we have to configure the rbac instance with all the created conf. Let's do this in a *rbac.js* file
+
 ```js
 const Rbac = require('express-rbac')
 const roles = require('./roles')
@@ -168,3 +189,25 @@ module.exports = rbac
   // req.user e req["resourceName"] should be defined like the resource we want to test permissions on
   app.get('/:ticketId',myAuthMiddleware, rbac.can('read', 'ticket'), myGetTicketController)
 ```
+
+If the user has the permission to access the controller, then the library will place a `permissionRes` attribute in the req object.\
+`permissionRes` has the following structure:
+
+```ts
+{
+  matches: [ // the list of permission matches (for debugging purposes)
+    {
+      match: {
+        role?:string,
+        resourceRole?:string
+      },
+      value: boolean | ANY,
+      attributes: string[]
+    }
+  ],
+  value: boolean | ANY, // the global value of the permission
+  attributes: string[] // the list of attributes that the user can access for the specified action
+}
+```
+
+## LISTS
