@@ -1,9 +1,10 @@
 {
-  "name": "express-rbac",
+  "name": "node-pseudo-rbac",
   "version": "0.0.1",
-  "description": "role based access control for nodejs",
+  "description": "pseudo role based access control for nodejs",
   "main": "lib/index.js",
   "dependencies": {
+    "@types/express": "^4.17.8",
     "notation": "^2.0.0"
   },
   "devDependencies": {
@@ -30,6 +31,7 @@
   ],
   "scripts": {
     "test": "jest --config jestconfig.json --silent=false --verbose=true --runInBand",
+    "test-coverage": "jest --config jestconfig.json --silent=false --verbose=true --runInBand --coverage --coverageReporters=\"json-summary\"",
     "build": "npx tsc",
     "prepare": "npm run build",
     "lint": "eslint",

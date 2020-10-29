@@ -1,14 +1,17 @@
-# README
+Permission library specifically designed to be used together with express but with no real dependencies.
+In its simplest form it implements [RBAC](https://en.wikipedia.org/wiki/Role-based_access_control) but it let also define roles that user can take on with respect to the resource.
+
+# PSEUDO RBAC
 We started to build this library because our team needed a permission library that could evaluate the permissions of a user based on his/her role in the application and with respect to the resource taken into consideration.
 
-In particular the library let you:
+In particular the library lets you:
   - define `role`s
   - define `resource`s and their own specific roles (called `resource-role`s)
   - define `permission`s for each role and resource-role with respect of each resource
   - define a list of query-conditions to filter out resources starting from user roles
   - use express middleware to manage user access on resources
 
-Permission are attribute-based, this means that you can specify a list of resource attributes to limit the effect of an action.
+Permissions are attribute-based, this means that you can specify a list of resource attributes to limit the effect of an action.
 
 ## EXAMPLE
 
@@ -129,7 +132,7 @@ Possible values for each permission are:
 
 let's create a *permissions.js* file
 ```js
-const { ANY } = require('express-rbac/core')
+const { ANY } = require('node-pseudo-rbac/core')
 
 module.exports = {
   ticket: {
@@ -160,7 +163,7 @@ module.exports = {
 now we have to configure the rbac instance with all the created conf. Let's do this in a *rbac.js* file
 
 ```js
-const Rbac = require('express-rbac')
+const Rbac = require('node-pseudo-rbac')
 const roles = require('./roles')
 const ticket = require('./ticket')
 const permissions = require('./permissions')
@@ -169,7 +172,14 @@ const rbac = new Rbac()
 
 rbac.setRoles(roles)
 rbac.addResource(ticket)
-rbac.setPermissions(Permissions)
+rbac.setPermissions(permissions)
+
+// or
+// const rbac = new Rbac({
+//  roles,
+//  ticket,
+//  permissions
+// })
 
 module.exports = rbac
 ```

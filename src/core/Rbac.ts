@@ -2,6 +2,7 @@ import Resource, { IResource, IResources, IResourceOptions, ISerializedResource 
 import Role, { IRole, IRoles, IResourceFilters } from './Role'
 import IUser from './IUser'
 import Permissions, { ISytemPermissions, ISerializedPermission, ISytemPermissionList, IPermissionCheck, ANY } from './Permission'
+import { Request, Response, NextFunction, RequestHandler } from 'express'
 
 import { Notation } from 'notation'
 
@@ -23,29 +24,50 @@ export interface IChecks {
   [action:string]:boolean|ICheck
 }
 
-interface INextFunction{
-  ():void
-}
-
-interface IRequest{
-  user: IUser,
+interface BaseRequest extends Request{
   permissionRes?: boolean|ICheck
-  [key: string]: unknown
+  permissionFilters?: unknown[]|boolean
+  [prop: string]: unknown
 }
 
-interface IMiddleware{
-  (req: IRequest, res:unknown, next:INextFunction):Promise<void>
+type IRequest<UserProp extends string> = BaseRequest & {
+  [U in UserProp]: IUser;
 }
 
-class Rbac {
-  roles:IRoles
-  resources:IResources
-  permissions?:ISytemPermissions
+const isIRequest = <UserProp extends string> (req: Request, userProp:UserProp): req is IRequest<UserProp> => {
+  return (req as IRequest<UserProp>)[userProp] as IUser !== undefined
+}
 
-  constructor () {
-    this.roles = {}
-    this.resources = {}
-    this.permissions = undefined
+// interface IMiddleware extends RequestHandler{
+//   (req: IRequest, res:Response, next:NextFunction):Promise<void>
+// }
+
+interface IRbacOptions<UserProp extends string>{
+  roles?:IRole[],
+  resources?:IResource[],
+  permissions?: ISytemPermissionList,
+  userProp?: UserProp
+}
+
+class Rbac<UserProp extends string = 'user'> {
+  roles:IRoles = {}
+  resources:IResources = {}
+  permissions?:ISytemPermissions = undefined
+  userProp:UserProp = 'user' as UserProp
+
+  constructor (options?:IRbacOptions<UserProp>) {
+    if (options?.roles) {
+      this.setRoles(options?.roles)
+    }
+    if (options?.resources) {
+      this.setResources(options?.resources)
+    }
+    if (options?.permissions) {
+      this.setPermissions(options?.permissions)
+    }
+    if (options?.userProp) {
+      this.userProp = options.userProp
+    }
   }
 
   addRole (role:string|Role, label?:string, description?:string, resourceFilterGetters?:IResourceFilters):void{
@@ -248,7 +270,7 @@ class Rbac {
               out[action] = {
                 matches,
                 value: true,
-                attributes: Glob.normalize(attributes) as string[]
+                attributes: Glob.normalize(attributes)
               }
             }
           }
@@ -312,7 +334,7 @@ class Rbac {
       return {
         matches,
         value: true,
-        attributes: Glob.normalize(attributes) as string[]
+        attributes: Glob.normalize(attributes)
       }
     }
     return false
@@ -348,14 +370,14 @@ class Rbac {
     return filters
   }
 
-  canMiddleware (action: string, resource:string): IMiddleware {
-    return async (req: IRequest, res: unknown, next:INextFunction) => {
-      if (!('user' in req)) {
-        throw Error('req.user must be defined')
-      } else if ((!('roles' in req.user)) || !Array.isArray(req.user.roles)) {
-        throw Error('req.user.roles must be defined as the list of the user-role names')
+  canMiddleware (action: string, resource:string): RequestHandler {
+    return async (req: Request, res: Response, next:NextFunction) => {
+      if (!isIRequest(req, this.userProp)) {
+        throw Error(`req.${this.userProp} must be defined`)
+      } else if ((!('roles' in req[this.userProp])) || !Array.isArray(req[this.userProp].roles)) {
+        throw Error(`req.${this.userProp}.roles must be defined as the list of the user-role names`)
       }
-      const permissionRes = await this.can(req.user, action, resource, req[resource])
+      const permissionRes = await this.can(req[this.userProp], action, resource, req[resource])
 
       if (permissionRes === false) {
         res.sendStatus(401)
@@ -366,16 +388,16 @@ class Rbac {
     }
   }
 
-  filtersMiddleware (resource:string): IMiddleware {
-    return async (req: IRequest, res: unknown, next:INextFunction) => {
-      if (!('user' in req)) {
-        throw Error('req.user must be defined')
-      } else if ((!('roles' in req.user)) || !Array.isArray(req.user.roles)) {
-        throw Error('req.user.roles must be defined as the list of the user-role names')
+  filtersMiddleware (resource:string): RequestHandler {
+    return async (req: Request, res: Response, next:NextFunction) => {
+      if (!isIRequest(req, this.userProp)) {
+        throw Error(`req.${this.userProp} must be defined`)
+      } else if ((!('roles' in req[this.userProp])) || !Array.isArray(req[this.userProp].roles)) {
+        throw Error(`req.${this.userProp}.roles must be defined as the list of the user-role names`)
       }
-      const permissionFilters = await this.getFilters(req.user, resource)
+      const permissionFilters = await this.getFilters(req[this.userProp], resource)
 
-      if (permissionFilter === false) {
+      if (permissionFilters === false) {
         res.sendStatus(401)
       }
 
