@@ -1,5 +1,5 @@
 import Action, { IActionInfo, IActions } from './Action'
-import Role, { IRole, IRoles } from './Role'
+import Role, { IResourceRole, IRole, IRoles, IResourceFilters } from './Role'
 import IUser from './IUser'
 import Permissions, { ISerializedPermission, IPermissionList } from './Permission'
 
@@ -11,7 +11,7 @@ export interface IGetRoles{
 export interface IResourceOptions{
   label?:string
   actions?: (string|IActionInfo)[]
-  resourceRoles?:(string|IRole)[]
+  resourceRoles?:(string|IResourceRole)[]
   resourceRolePermissions?: IPermissionList
   getRoles?: IGetRoles
 }
@@ -51,11 +51,14 @@ class Resource {
     }
 
     if (options?.resourceRoles) {
-      this.resourceRoles = options.resourceRoles.reduce((aggr: IRoles, roleItem: string|IRole):IRoles => {
+      this.resourceRoles = options.resourceRoles.reduce((aggr: IRoles, roleItem: string|IResourceRole):IRoles => {
         if (typeof roleItem === 'string') {
           aggr[roleItem] = new Role(roleItem)
         } else {
-          aggr[roleItem.name] = new Role(roleItem.name, roleItem.label, roleItem.description, roleItem.resourceFilterGetters)
+          const getters: IResourceFilters | undefined = roleItem.resourceFilterGetter ? {
+            [this.name]: roleItem.resourceFilterGetter
+          } : undefined
+          aggr[roleItem.name] = new Role(roleItem.name, roleItem.label, roleItem.description, getters)
         }
         return aggr
       }, {})

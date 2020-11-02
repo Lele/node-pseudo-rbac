@@ -121,7 +121,7 @@ Let's create a new file *ticket.js* and define resource roles permissions such t
         resourceRoles
       }
     }
-  })
+  }
 ```
 ### Defining **ROLE PERMISSIONS**
 Finally we can define roles permissions. The permissions-object defines permissions on every resource and role.
@@ -140,7 +140,7 @@ module.exports = {
     // owners can read, update, assign and comment regardless their role in the ticket
       read: ANY,
       assign: true,
-      comment: ANY
+      comment: ANY,
       update: ANY
     },
     // overwrite generic assign and update behaviour for Member role
@@ -197,7 +197,7 @@ module.exports = rbac
   })
 
   // req.user e req["resourceName"] should be defined like the resource we want to test permissions on
-  app.get('/:ticketId',myAuthMiddleware, rbac.can('read', 'ticket'), myGetTicketController)
+  app.get('/:ticketId',myAuthMiddleware, rbac.canMiddleware('read', 'ticket'), myGetTicketController)
 ```
 
 If the user has the permission to access the controller, then the library will place a `permissionRes` attribute in the req object.\

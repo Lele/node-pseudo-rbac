@@ -42,24 +42,18 @@ export const initializePermissions = (rbac: Rbac):void => {
     actions: ['read', 'assign', 'comment'],
     resourceRoles: [{
       name: 'author',
-      resourceFilterGetters: {
-        ticket: (user:IAppUser) => {
-          return [{ author: user.id }]
-        }
+      resourceFilterGetter: (user:IAppUser) => {
+        return [{ author: user.id }]
       }
     }, {
       name: 'watcher',
-      resourceFilterGetters: {
-        ticket: (user:IAppUser) => {
-          return [{ watchers: user.id }]
-        }
+      resourceFilterGetter: (user:IAppUser) => {
+        return [{ watchers: user.id }]
       }
     }, {
       name: 'assignee',
-      resourceFilterGetters: {
-        ticket: (user:IAppUser) => {
-          return [{ assignee: user.id }]
-        }
+      resourceFilterGetter: (user:IAppUser) => {
+        return [{ assignee: user.id }]
       }
     }],
     resourceRolePermissions: {

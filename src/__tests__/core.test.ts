@@ -11,7 +11,6 @@ beforeEach(() => {
 test('watcher can read', async () => {
   const user = {
     roles: ['customer'],
-    resourceRoles: [],
     id: 1
   }
   const ticket = {
@@ -28,7 +27,6 @@ test('watcher can read', async () => {
 test('customer cannot read any ticket', async () => {
   const user = {
     roles: ['customer'],
-    resourceRoles: [],
     id: 1
   }
 

@@ -4,9 +4,9 @@
 - [x] implement library entry-point
 - [x] implement setPermission
 - [x] extract resource-list filters for each role of a user to query the database
-- [ ] express explicit integration
-- [ ] Redis cache
+- [x] express explicit integration
+- [x] send 401 status when non permission was found
+- [x] define the user `req` property name (default = 'user')
 - [ ] Error handling
-- [ ] send 401 status when non permission was found
-- [ ] define the user attribute name (default = 'user')
-- [ ] define error callback
+- [ ] define premission denied custom callback
+- [ ] Redis cache

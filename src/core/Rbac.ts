@@ -120,7 +120,7 @@ class Rbac<UserProp extends string = 'user'> {
     }
   }
 
-  setPermission (permission: ISerializedPermission):void{
+  addPermission (permission: ISerializedPermission):void{
     if (!this.roles || !(permission.role in this.roles)) {
       throw Error(`No role found with name: ${permission.role}`)
     }
@@ -162,11 +162,11 @@ class Rbac<UserProp extends string = 'user'> {
             this.permissions = undefined
             throw Error(`No actions found with name = ${actionName} `)
           }
-          if (typeof permissionValue !== 'boolean') {
+          if (typeof permissionValue !== 'boolean' && !Array.isArray(permissionValue)) {
             for (const [resourceRoleName] of Object.entries(permissionValue)) {
               if (!this.resources[resourceName].hasResourceRole(resourceRoleName)) {
                 this.permissions = undefined
-                throw Error(`No resource role found with name = ${actionName} in ${resourceName} resource`)
+                throw Error(`No resource role found with name = ${resourceRoleName} in ${resourceName} resource`)
               }
             }
           }
@@ -384,6 +384,7 @@ class Rbac<UserProp extends string = 'user'> {
       }
 
       req.permissionRes = permissionRes
+
       next()
     }
   }

@@ -8,11 +8,18 @@ export interface IResourceFilters{
   [resource: string]: IGetResourceFilter
 }
 
-export interface IRole{
+interface BaseRole {
   name: string,
   label?: string
   description?: string
+}
+
+export interface IRole extends BaseRole{
   resourceFilterGetters?:IResourceFilters
+}
+
+export interface IResourceRole extends BaseRole{
+  resourceFilterGetter?:IGetResourceFilter
 }
 
 export interface IUserRoles {

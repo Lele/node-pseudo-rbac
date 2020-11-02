@@ -39,7 +39,7 @@ class Permissions {
   can (action: string, role: string, resourceRole?:string, defaultResRolePermissions?:Permissions): false|IPermissionCheck {
     const rolePermissions = this.permissionObject[role]
     if (rolePermissions && action in rolePermissions) {
-      if (typeof rolePermissions[action] === 'boolean' || Array.isArray(rolePermissions[action])) {
+      if (typeof rolePermissions[action] === 'boolean' || rolePermissions[action] === ANY || Array.isArray(rolePermissions[action])) {
         if (rolePermissions[action]) {
           let value: PermissionValue
           let attributes: string[]
