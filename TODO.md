@@ -7,6 +7,6 @@
 - [x] express explicit integration
 - [x] send 401 status when non permission was found
 - [x] define the user `req` property name (default = 'user')
+- [x] define premission denied custom callback
 - [ ] Error handling
-- [ ] define premission denied custom callback
 - [ ] Redis cache

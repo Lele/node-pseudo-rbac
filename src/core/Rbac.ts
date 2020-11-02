@@ -30,6 +30,10 @@ interface BaseRequest extends Request{
   [prop: string]: unknown
 }
 
+export interface IPermissionDenied {
+  (req:Request, res:Response, next:NextFunction, resource:string, action?: string): void
+}
+
 type IRequest<UserProp extends string> = BaseRequest & {
   [U in UserProp]: IUser;
 }
@@ -47,6 +51,7 @@ interface IRbacOptions<UserProp extends string>{
   resources?:IResource[],
   permissions?: ISytemPermissionList,
   userProp?: UserProp
+  permissionDeniedCallback?: IPermissionDenied
 }
 
 class Rbac<UserProp extends string = 'user'> {
@@ -54,6 +59,7 @@ class Rbac<UserProp extends string = 'user'> {
   resources:IResources = {}
   permissions?:ISytemPermissions = undefined
   userProp:UserProp = 'user' as UserProp
+  permissionDeniedCallback?: IPermissionDenied
 
   constructor (options?:IRbacOptions<UserProp>) {
     if (options?.roles) {
@@ -67,6 +73,9 @@ class Rbac<UserProp extends string = 'user'> {
     }
     if (options?.userProp) {
       this.userProp = options.userProp
+    }
+    if (options?.permissionDeniedCallback) {
+      this.permissionDeniedCallback = options.permissionDeniedCallback
     }
   }
 
@@ -380,7 +389,12 @@ class Rbac<UserProp extends string = 'user'> {
       const permissionRes = await this.can(req[this.userProp], action, resource, req[resource])
 
       if (permissionRes === false) {
-        res.sendStatus(401)
+        if (this.permissionDeniedCallback) {
+          this.permissionDeniedCallback(req, res, next, resource, action)
+        } else {
+          res.sendStatus(401)
+        }
+        return
       }
 
       req.permissionRes = permissionRes
@@ -399,7 +413,12 @@ class Rbac<UserProp extends string = 'user'> {
       const permissionFilters = await this.getFilters(req[this.userProp], resource)
 
       if (permissionFilters === false) {
-        res.sendStatus(401)
+        if (this.permissionDeniedCallback) {
+          this.permissionDeniedCallback(req, res, next, resource)
+        } else {
+          res.sendStatus(401)
+        }
+        return
       }
 
       req.permissionFilters = permissionFilters
