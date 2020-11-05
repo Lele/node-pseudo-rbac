@@ -10,3 +10,5 @@
 - [x] define premission denied custom callback
 - [ ] Error handling
 - [ ] Redis cache
+- [ ] Documentation
+- [ ] 100% Coverage

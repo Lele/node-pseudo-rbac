@@ -42,10 +42,6 @@ const isIRequest = <UserProp extends string> (req: Request, userProp:UserProp): 
   return (req as IRequest<UserProp>)[userProp] as IUser !== undefined
 }
 
-// interface IMiddleware extends RequestHandler{
-//   (req: IRequest, res:Response, next:NextFunction):Promise<void>
-// }
-
 interface IRbacOptions<UserProp extends string>{
   roles?:IRole[],
   resources?:IResource[],
@@ -253,7 +249,7 @@ class Rbac<UserProp extends string = 'user'> {
             out[action] = false
           } else {
             const matches: IPermissionCheck[] = []
-            const attributes: string[] = []
+            const attributes: string[][] = []
 
             for (const role of roles) {
               if (resourceRoles && resourceRoles.length > 0) {
@@ -261,14 +257,14 @@ class Rbac<UserProp extends string = 'user'> {
                   const permissionValue = resourcePermission.can(action, role, resourceRole, this.resources[resourceName].resourceRolePermissions)
                   if (permissionValue) {
                     matches.push(permissionValue)
-                    attributes.push(...permissionValue.attributes)
+                    attributes.push(permissionValue.attributes)
                   }
                 }
               } else {
                 const permissionValue = resourcePermission.can(action, role, undefined, this.resources[resourceName].resourceRolePermissions)
                 if (permissionValue) {
                   matches.push(permissionValue)
-                  attributes.push(...permissionValue.attributes)
+                  attributes.push(permissionValue.attributes)
                 }
               }
             }
@@ -279,7 +275,7 @@ class Rbac<UserProp extends string = 'user'> {
               out[action] = {
                 matches,
                 value: true,
-                attributes: Glob.normalize(attributes)
+                attributes: Glob.union(...attributes)
               }
             }
           }
@@ -318,7 +314,7 @@ class Rbac<UserProp extends string = 'user'> {
       }
 
       const matches: IPermissionCheck[] = []
-      const attributes: string[] = []
+      const attributes: string[][] = []
 
       for (const role of roles) {
         if (resourceRoles && resourceRoles.length > 0) {
@@ -326,14 +322,14 @@ class Rbac<UserProp extends string = 'user'> {
             const permissionValue = resourcePermission.can(action, role, resourceRole, this.resources[resourceName].resourceRolePermissions)
             if (permissionValue) {
               matches.push(permissionValue)
-              attributes.push(...permissionValue.attributes)
+              attributes.push(permissionValue.attributes)
             }
           }
         } else {
           const permissionValue = resourcePermission.can(action, role, undefined, this.resources[resourceName].resourceRolePermissions)
           if (permissionValue) {
             matches.push(permissionValue)
-            attributes.push(...permissionValue.attributes)
+            attributes.push(permissionValue.attributes)
           }
         }
       }
@@ -343,7 +339,7 @@ class Rbac<UserProp extends string = 'user'> {
       return {
         matches,
         value: true,
-        attributes: Glob.normalize(attributes)
+        attributes: Glob.union(...attributes)
       }
     }
     return false
@@ -403,7 +399,7 @@ class Rbac<UserProp extends string = 'user'> {
     }
   }
 
-  filtersMiddleware (resource:string): RequestHandler {
+  filterMiddleware (resource:string): RequestHandler {
     return async (req: Request, res: Response, next:NextFunction) => {
       if (!isIRequest(req, this.userProp)) {
         throw Error(`req.${this.userProp} must be defined`)

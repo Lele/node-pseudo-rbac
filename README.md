@@ -66,7 +66,6 @@ First, we want to define user roles. Create a new file *roles.js* and insert the
   }]
 
   module.exports = roles
-
 ```
 
 ### Defining **RESOURCES**
@@ -132,56 +131,56 @@ Possible values for each permission are:
 
 let's create a *permissions.js* file
 ```js
-const { ANY } = require('node-pseudo-rbac/core')
+  const { ANY } = require('node-pseudo-rbac/core')
 
-module.exports = {
-  ticket: {
-    owner: {
-    // owners can read, update, assign and comment regardless their role in the ticket
-      read: ANY,
-      assign: true,
-      comment: ANY,
-      update: ANY
-    },
-    // overwrite generic assign and update behaviour for Member role
-    member: {
-      read: ANY,
-      assign: {
-        author: true
+  module.exports = {
+    ticket: {
+      owner: {
+      // owners can read, update, assign and comment regardless their role in the ticket
+        read: ANY,
+        assign: true,
+        comment: ANY,
+        update: ANY
       },
-      update: ['title']
-    },
-    //Customers cannot comment any ticket
-    customer: {
-      comment: false
+      // overwrite generic assign and update behaviour for Member role
+      member: {
+        read: ANY,
+        assign: {
+          author: true
+        },
+        update: ['title']
+      },
+      //Customers cannot comment any ticket
+      customer: {
+        comment: false
+      }
     }
   }
-}
 ```
 
 ### Configure `rbac`
 now we have to configure the rbac instance with all the created conf. Let's do this in a *rbac.js* file
 
 ```js
-const Rbac = require('node-pseudo-rbac')
-const roles = require('./roles')
-const ticket = require('./ticket')
-const permissions = require('./permissions')
+  const Rbac = require('node-pseudo-rbac')
+  const roles = require('./roles')
+  const ticket = require('./ticket')
+  const permissions = require('./permissions')
 
-const rbac = new Rbac()
+  const rbac = new Rbac()
 
-rbac.setRoles(roles)
-rbac.addResource(ticket)
-rbac.setPermissions(permissions)
+  rbac.setRoles(roles)
+  rbac.addResource(ticket)
+  rbac.setPermissions(permissions)
 
-// or
-// const rbac = new Rbac({
-//  roles,
-//  ticket,
-//  permissions
-// })
+  // or
+  // const rbac = new Rbac({
+  //  roles,
+  //  ticket,
+  //  permissions
+  // })
 
-module.exports = rbac
+  module.exports = rbac
 ```
 
 ### Apply the Permission **MIDDLEWARE**
@@ -197,27 +196,116 @@ module.exports = rbac
   })
 
   // req.user e req["resourceName"] should be defined like the resource we want to test permissions on
-  app.get('/:ticketId',myAuthMiddleware, rbac.canMiddleware('read', 'ticket'), myGetTicketController)
+  app.get('tickets/:ticketId',myAuthMiddleware, rbac.canMiddleware('read', 'ticket'), myGetTicketController)
 ```
 
 If the user has the permission to access the controller, then the library will place a `permissionRes` attribute in the req object.\
 `permissionRes` has the following structure:
 
 ```ts
-{
-  matches: [ // the list of permission matches (for debugging purposes)
-    {
-      match: {
-        role?:string,
-        resourceRole?:string
-      },
-      value: boolean | ANY,
-      attributes: string[]
-    }
-  ],
-  value: boolean | ANY, // the global value of the permission
-  attributes: string[] // the list of attributes that the user can access for the specified action
-}
+  {
+    matches: [ // the list of permission matches (for debugging purposes)
+      {
+        match: {
+          role?:string,
+          resourceRole?:string
+        },
+        value: boolean | ANY,
+        attributes: string[]
+      }
+    ],
+    value: boolean | ANY, // the global value of the permission
+    attributes: string[] // the list of attributes that the user can access for the specified action
+  }
 ```
 
-## LISTS
+## QUERY-CONDITIONS
+Another important feature lets you define for each resource - and for each role (including resource-roles) - the filters, you need to apply to your preferred DB, to list all the possible instances of that resource. \
+Considering the previous example, we know that:
+  - Members and Owners can read `any` ticket
+  - Customers can read only tickets in which they are involved
+
+### Defining **filterGetters**
+Members and Customers can read `any` ticket, so there's no need to apply any filter to the resource. \
+However we still have to define what does it means to be involved in a ticket and we can achieve this result describing the filters that characterize resource roles:
+
+`ticket.js`
+```diff
+  // always define resources with actions
+  // if the user can assume particular roles with respect to the resource you have to specify resource-roles
+  // at this point you need to define a function that returns user roles and user resource-roles
+  // if you specify resource-roles you probably want to specify generic resource-role permissions for every action
+  module.exports = {
+    name:'ticket',
+  -   resourceRoles: ['author', 'watcher', 'assignee'],
+  +   resourceRoles: [{
+  +     name: 'author',
+  +     resourceFilterGetter: (user) => {
+  +       return [{ author: user.id }]
+  +     }
+  +   }, {
+  +     name: 'watcher',
+  +     resourceFilterGetter: (user) => {
+  +       return [{ watchers: user.id }]
+  +     }
+  +   }, {
+  +     name: 'assignee',
+  +     resourceFilterGetter: (user) => {
+  +       return [{ assignee: user.id }]
+  +     }
+  +   }],
+    actions: ['read', 'assign', 'comment'],
+    .
+    .
+    .
+  }
+```
+Here we supposed to deal with a no-sql db but the resourceFilterGetter return-value could be any type of array.\
+Even Roles can have filter getters and you can define them specifying the `resourceFilterGetters` property in the following way:
+
+```js
+  const Rbac = require('node-pseudo-rbac')
+
+  const rbac = new Rbac()
+
+  rbac.addRole('Tester', {
+    resourceFilterGetters: {
+      ticket: (user) => {
+        return [{ tester: user.id }]
+      }
+    }
+  })
+```
+
+### Applying the **filter middleware**
+Applying the filter middleware is as simple as for any other middleware:
+
+```js
+  const rbac = require('./rbac')
+  const express = require('express');
+
+  const app = express()
+
+  app.get('tickets/',myAuthMiddleware, rbac.filterMiddleware('ticket'), myTicketListController)
+```
+Once executed, the filter middleware will populate the `permissionFilters` property of the `req` object containing the array of your predefined filters accordingly to the roles of your user.
+
+Obviously if a user has no **read** permission on the resource he will receive a 401 error. On the other hand, a user that can read `any` ticket, results in an empty `permissionFilters` array.
+
+
+## PERMISSION DENIED HANDLER
+You can customize the behavior of the middleware in case the user does not have any permission. You only need to add a `permissionDeniedCallback` to the Rbac definition, in this way:
+
+```js
+  const rbac = new Rbac({permissionDeniedCallback: (req, res) => {
+    console.log("'tacci tua");
+    res.sendStatus(401)
+  }})
+```
+
+# CREDITS
+This library was inspired by https://github.com/onury/accesscontrol
+
+## DEPENDENCIES
+- https://www.npmjs.com/package/@types/express
+- https://www.npmjs.com/package/notation

@@ -1,10 +1,10 @@
 declare module 'notation'{
   interface INormalizeFunc{
-    (globs:string[]): string[]
+    (...globs:string[][]): string[]
   }
 
   interface IGlob {
-    normalize: INormalizeFunc
+    union: INormalizeFunc
   }
 
   interface Notation {
