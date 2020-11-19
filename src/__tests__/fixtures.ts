@@ -6,6 +6,10 @@ export interface IAppUser extends IUser{
   id?:number
 }
 
+const isIAppUser =  (user: IUser): user is IAppUser=> {
+  return (user as IAppUser).id !== undefined
+}
+
 interface AppTicket {
   watchers: number[]
   author: number
@@ -42,18 +46,30 @@ export const initializePermissions = (rbac: Rbac):void => {
     actions: ['read', 'assign', 'comment'],
     resourceRoles: [{
       name: 'author',
-      resourceFilterGetter: (user:IAppUser) => {
-        return [{ author: user.id }]
+      resourceFilterGetter: (user?:IUser) => {
+        if(user && isIAppUser(user)){
+          return [{ author: user.id }]
+        } else {
+          return []
+        }
       }
     }, {
       name: 'watcher',
-      resourceFilterGetter: (user:IAppUser) => {
-        return [{ watchers: user.id }]
+      resourceFilterGetter: (user?:IUser) => {
+        if(user && isIAppUser(user)){
+          return [{ watchers: user.id }]
+        } else {
+          return []
+        }
       }
     }, {
       name: 'assignee',
-      resourceFilterGetter: (user:IAppUser) => {
-        return [{ assignee: user.id }]
+      resourceFilterGetter: (user?:IUser) => {
+        if(user && isIAppUser(user)){
+          return [{ assignee: user.id }]
+        } else {
+          return []
+        }
       }
     }],
     resourceRolePermissions: {
