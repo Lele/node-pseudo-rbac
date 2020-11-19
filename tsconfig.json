@@ -19,8 +19,13 @@
     "lib/*",
     "node_modules",
     "coverage",
+    "docs",
     "types",
     "src/__tests__/*",
     "src/examples/*"
-  ]
+  ],
+  "typedocOptions": {
+    "mode": "modules",
+    "out": "docs",
+  }
 }

@@ -4,23 +4,40 @@ import IUser from './IUser'
 import Permissions, { ISerializedPermission, IPermissionList } from './Permission'
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
+/**
+* interface for custom function that retrieve the roles and resource-roles of a user with respect to a resource
+*/
 export interface IGetRoles{
   (user: IUser, resource?: unknown): IUser|Promise<IUser>
 }
 
+/**
+* interface that defines resource-options object
+*/
 export interface IResourceOptions{
+  /** resource label */
   label?:string
+  /** the list of actions that can be performed over the resource */
   actions?: (string|IActionInfo)[]
+  /** the list of roles that a user can take on with respect to the resource */
   resourceRoles?:(string|IResourceRole)[]
+  /** the resource-role permission configuration-object */
   resourceRolePermissions?: IPermissionList
+  /** the function that retrieve the user roles and resource-roles with respect to the resource */
   getRoles?: IGetRoles
 }
 
+/**
+* interface of the resource configuration object
+*/
 export interface IResource{
   name: string,
   options?: IResourceOptions
 }
 
+/**
+* interface that defines a serialized resource
+*/
 export interface ISerializedResource {
   name: string
   label: string
@@ -29,7 +46,7 @@ export interface ISerializedResource {
   resourceRolePermissions?: ISerializedPermission[]
 }
 
-class Resource {
+export class Resource {
   label: string
   actions?: IActions
   resourceRoles?: IRoles
@@ -85,6 +102,10 @@ class Resource {
     }
   }
 
+  /**
+   * set resource role permissions - overwrite existing permissions
+   * @param resourceRolePermissions the resource role permission configuration-object
+   */
   setResourceRolePermissions (resourceRolePermissions: IPermissionList):void {
     for (const [roleName, actionPermissions] of Object.entries(resourceRolePermissions)) {
       if (!this.hasResourceRole(roleName)) {
@@ -99,14 +120,30 @@ class Resource {
     this.resourceRolePermissions = new Permissions(this.name, true, resourceRolePermissions)
   }
 
+  /**
+   * verify if a resource has a certain resource role
+   * @param roleName the resource role name
+   * @return true if the resource role exists
+   */
   hasResourceRole (roleName: string): boolean {
     return !!this.resourceRoles && roleName in this.resourceRoles
   }
 
+  /**
+   * verify if a resource has a certain action
+   * @param actionName the action name
+   * @return true if the action exists
+   */
   hasAction (actionName: string): boolean {
     return !!this.actions && actionName in this.actions
   }
 
+  /**
+   * Function returning the list of conditions to filter out a specific resource based on resource-roles
+   * @param user the user object
+   * @param resourceRole the list of resourceRoles to test or undefined (test all resource roles)
+   * @return an array of user-defined conditions
+   */
   getResourceRoleFilters (user:IUser, resourceRoles?:string[]):unknown[] {
     if (!this.resourceRoles) {
       return []
@@ -125,6 +162,9 @@ class Resource {
     return outFilters
   }
 
+  /**
+   * function returning a serialized version of the resource instance
+   */
   toJSON (): ISerializedResource {
     return {
       name: this.name,
@@ -143,6 +183,9 @@ class Resource {
   }
 }
 
+/**
+ * interface of the object that lists all possible resources in a library instance
+ */
 export interface IResources{
   [resource: string]: Resource
 }

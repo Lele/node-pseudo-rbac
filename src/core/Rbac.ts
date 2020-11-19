@@ -8,45 +8,76 @@ import { Notation } from 'notation'
 
 const Glob = Notation.Glob
 
+/**
+ * interface of the serializable representation of a pseudo-rbac instance
+ */
 interface ISerializedRbac{
   roles: IRole[],
   resources: ISerializedResource[]
   permissions: ISerializedPermission[]
 }
 
+/**
+ * interface of the permission-check result object
+ */
 export interface ICheck {
   matches: IPermissionCheck[],
   value: boolean | typeof ANY,
   attributes: string[]
 }
 
+/**
+ * interface that lists all the permissions of a single user wrt a single resource
+ */
 export interface IChecks {
   [action:string]:boolean|ICheck
 }
 
+/**
+ * interface that extends express Request adding pseudo-rbac result properties
+ */
 interface BaseRequest extends Request{
+  /** here is stored the permissio check result */
   permissionRes?: boolean|ICheck
+  /** here are stored the list of conditions to apply to retrieve resource user-dependent list */
   permissionFilters?: unknown[]|boolean
   [prop: string]: unknown
 }
 
+/**
+ * interface that models the custom Permission Denied callback
+ */
 export interface IPermissionDenied {
   (req:Request, res:Response, next:NextFunction, resource:string, action?: string): void
 }
 
+/**
+ * interface that extends express Request adding IUser props (the name of the property is customizable)
+ */
 type IRequest<UserProp extends string> = BaseRequest & {
   [U in UserProp]: IUser;
 }
 
+/**
+ * IRequest typeguard
+ */
 const isIRequest = <UserProp extends string> (req: Request, userProp:UserProp): req is IRequest<UserProp> => {
   return (req as IRequest<UserProp>)[userProp] as IUser !== undefined
 }
 
+/**
+ * interface of the pesudo-rbac constructor options object
+ */
 interface IRbacOptions<UserProp extends string>{
+  /** the list of roles */
   roles?:IRole[],
+  /** the list of resources */
   resources?:IResource[],
+  /** the permission-configuration object */
   permissions?: ISytemPermissionList,
+  /** the name of user prop in the Request object */
   userProp?: UserProp
+  /** the custom Permission Denied callback */
   permissionDeniedCallback?: IPermissionDenied
 }
 
@@ -57,6 +88,9 @@ class Rbac<UserProp extends string = 'user'> {
   userProp:UserProp = 'user' as UserProp
   permissionDeniedCallback?: IPermissionDenied
 
+  /**
+   * you can find examples in the library README
+   */
   constructor (options?:IRbacOptions<UserProp>) {
     if (options?.roles) {
       this.setRoles(options?.roles)
@@ -75,6 +109,13 @@ class Rbac<UserProp extends string = 'user'> {
     }
   }
 
+  /**
+   * insert a single Role
+   * @param role the name of the role or the Role Object
+   * @param label the role label
+   * @param description the role description
+   * @param resourceFilterGetters the object containing resurce filter getters
+   */
   addRole (role:string|Role, label?:string, description?:string, resourceFilterGetters?:IResourceFilters):void{
     if (typeof role === 'string') {
       this.checkRoleName(role)
@@ -85,6 +126,10 @@ class Rbac<UserProp extends string = 'user'> {
     }
   }
 
+  /**
+   * Set all the roles at once. overwrites existing roles
+   * @param roles the list of roles. Single items can be both string or Role instance or IRole object
+   */
   setRoles (roles:(string|IRole|Role)[]):void {
     this.roles = {}
 
@@ -101,6 +146,11 @@ class Rbac<UserProp extends string = 'user'> {
     }
   }
 
+  /**
+   * add a single resource
+   * @param resource the name of the resorce or a Resource instance
+   * @param options the options of the resource
+   */
   addResource (resource:string|Resource, options?:IResourceOptions):void{
     if (typeof resource === 'string') {
       this.resources[resource] = new Resource(resource, options)
@@ -109,6 +159,10 @@ class Rbac<UserProp extends string = 'user'> {
     }
   }
 
+  /**
+   * Set all the resources at once. overwrites existing resources
+   * @param resources the list of resources. Single items can be both string or Resource instance or IResource object
+   */
   setResources (resources:(string|IResource|Resource)[]):void {
     this.resources = {}
 
@@ -125,6 +179,10 @@ class Rbac<UserProp extends string = 'user'> {
     }
   }
 
+  /**
+   * add a single permission
+   * @param permission the permission configuration object
+   */
   addPermission (permission: ISerializedPermission):void{
     if (!this.roles || !(permission.role in this.roles)) {
       throw Error(`No role found with name: ${permission.role}`)
@@ -147,6 +205,10 @@ class Rbac<UserProp extends string = 'user'> {
     this.permissions[permission.resource].setPermission(permission)
   }
 
+  /**
+   * set all the permissions at once. Overwrite existing permissions
+   * @param permissions the list of permission configuration object
+   */
   setPermissions (permissions:ISytemPermissionList):void{
     this.permissions = {}
 
@@ -181,6 +243,11 @@ class Rbac<UserProp extends string = 'user'> {
     }
   }
 
+  /**
+   * check if a role name already exists
+   * @param roleName the role name
+   * @throw exception when there is a match
+   */
   checkRoleName (roleName:string): void{
     for (const [, resource] of Object.entries(this.resources)) {
       if (resource.hasResourceRole(roleName)) {
@@ -217,6 +284,13 @@ class Rbac<UserProp extends string = 'user'> {
     return outJson
   }
 
+  /**
+   * retrieve the list of all user permissions against a single resource
+   * @param user the user object to be tested
+   * @param resourceName the name of the resource to test
+   * @param resourceObj the resource object. If defined, then user roles and resource-roles will be evaluated
+   * @return the list of user-permissions
+   */
   async could (user:IUser, resourceName:string, resourceObj?:unknown):Promise<IChecks> {
     let { roles } = user
     const { actions } = this.resources[resourceName]
@@ -285,6 +359,14 @@ class Rbac<UserProp extends string = 'user'> {
     return out
   }
 
+  /**
+   * test if a user can perform a single action on a resource
+   * @param user the user object to be tested
+   * @param action the action name
+   * @param resourceName the name of the resource to test
+   * @param resourceObj the resource object. If defined, then user roles and resource-roles will be evaluated
+   * @return the permission check result
+   */
   async can (user:IUser, action: string, resourceName:string, resourceObj?:unknown):Promise<false|ICheck> {
     let { roles } = user
     if (this.permissions && this.resources && this.resources[resourceName]) {
@@ -345,6 +427,12 @@ class Rbac<UserProp extends string = 'user'> {
     return false
   }
 
+  /**
+   * retrieve all the conditions to filter out a resource based on the current user
+   * @param user the current user object
+   * @param resourceName the name of the resource to be filtered
+   * @return the list of conditions or `false` (user cannot read the resource)
+   */
   async getFilters (user:IUser, resourceName:string):Promise<unknown[]|boolean> {
     let { roles, resourceRoles } = user
 
@@ -375,6 +463,16 @@ class Rbac<UserProp extends string = 'user'> {
     return filters
   }
 
+  /**
+   * permission check middleware wrapper
+   * @param action the name of the action
+   * @param resource the name of the resource
+   * @return the actual middleware function
+   * Usage:
+   * ```ts
+   * app.get('/tickets',canMiddleware('read','ticket'), yourController)
+   * ```
+   */
   canMiddleware (action: string, resource:string): RequestHandler {
     return async (req: Request, res: Response, next:NextFunction) => {
       if (!isIRequest(req, this.userProp)) {
@@ -399,6 +497,15 @@ class Rbac<UserProp extends string = 'user'> {
     }
   }
 
+  /**
+   * filter middleware wrapper
+   * @param resource the name of the resource
+   * @return the actual middleware function
+   * Usage:
+   * ```ts
+   * app.get('/tickets',filterMiddleware('ticket'), yourController)
+   * ```
+   */
   filterMiddleware (resource:string): RequestHandler {
     return async (req: Request, res: Response, next:NextFunction) => {
       if (!isIRequest(req, this.userProp)) {

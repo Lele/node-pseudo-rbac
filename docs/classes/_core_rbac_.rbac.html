@@ -1,0 +1,848 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Rbac | node-pseudo-rbac</title>
+	<meta name="description" content="Documentation for node-pseudo-rbac">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">node-pseudo-rbac</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_core_rbac_.html">&quot;core/Rbac&quot;</a>
+				</li>
+				<li>
+					<a href="_core_rbac_.rbac.html">Rbac</a>
+				</li>
+			</ul>
+			<h1>Class Rbac&lt;UserProp&gt;</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>UserProp<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span> = <span class="tsd-signature-type">"user"</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">Rbac</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#permissiondeniedcallback" class="tsd-kind-icon">permission<wbr>Denied<wbr>Callback</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#permissions" class="tsd-kind-icon">permissions</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#resources" class="tsd-kind-icon">resources</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#roles" class="tsd-kind-icon">roles</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#userprop" class="tsd-kind-icon">user<wbr>Prop</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#addpermission" class="tsd-kind-icon">add<wbr>Permission</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#addresource" class="tsd-kind-icon">add<wbr>Resource</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#addrole" class="tsd-kind-icon">add<wbr>Role</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#can" class="tsd-kind-icon">can</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#canmiddleware" class="tsd-kind-icon">can<wbr>Middleware</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#checkrolename" class="tsd-kind-icon">check<wbr>Role<wbr>Name</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#could" class="tsd-kind-icon">could</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#filtermiddleware" class="tsd-kind-icon">filter<wbr>Middleware</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#getfilters" class="tsd-kind-icon">get<wbr>Filters</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#setpermissions" class="tsd-kind-icon">set<wbr>Permissions</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#setresources" class="tsd-kind-icon">set<wbr>Resources</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#setroles" class="tsd-kind-icon">set<wbr>Roles</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_rbac_.rbac.html#tojson" class="tsd-kind-icon">toJSON</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Rbac<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_core_rbac_.irbacoptions.html" class="tsd-signature-type">IRbacOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">UserProp</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_core_rbac_.rbac.html" class="tsd-signature-type">Rbac</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L89">src/core/Rbac.ts:89</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>you can find examples in the library README</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/_core_rbac_.irbacoptions.html" class="tsd-signature-type">IRbacOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">UserProp</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_core_rbac_.rbac.html" class="tsd-signature-type">Rbac</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="permissiondeniedcallback" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> permission<wbr>Denied<wbr>Callback</h3>
+					<div class="tsd-signature tsd-kind-icon">permission<wbr>Denied<wbr>Callback<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_rbac_.ipermissiondenied.html" class="tsd-signature-type">IPermissionDenied</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L89">src/core/Rbac.ts:89</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="permissions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> permissions</h3>
+					<div class="tsd-signature tsd-kind-icon">permissions<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_permission_.isytempermissions.html" class="tsd-signature-type">ISytemPermissions</a><span class="tsd-signature-symbol"> = undefined</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L87">src/core/Rbac.ts:87</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="resources" class="tsd-anchor"></a>
+					<h3>resources</h3>
+					<div class="tsd-signature tsd-kind-icon">resources<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_resource_.iresources.html" class="tsd-signature-type">IResources</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L86">src/core/Rbac.ts:86</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="roles" class="tsd-anchor"></a>
+					<h3>roles</h3>
+					<div class="tsd-signature tsd-kind-icon">roles<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_core_role_.iroles.html" class="tsd-signature-type">IRoles</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L85">src/core/Rbac.ts:85</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="userprop" class="tsd-anchor"></a>
+					<h3>user<wbr>Prop</h3>
+					<div class="tsd-signature tsd-kind-icon">user<wbr>Prop<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">UserProp</span><span class="tsd-signature-symbol"> = &#x27;user&#x27; as UserProp</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L88">src/core/Rbac.ts:88</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addpermission" class="tsd-anchor"></a>
+					<h3>add<wbr>Permission</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Permission<span class="tsd-signature-symbol">(</span>permission<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_permission_.iserializedpermission.html" class="tsd-signature-type">ISerializedPermission</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L186">src/core/Rbac.ts:186</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>add a single permission</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>permission: <a href="../interfaces/_core_permission_.iserializedpermission.html" class="tsd-signature-type">ISerializedPermission</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the permission configuration object</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addresource" class="tsd-anchor"></a>
+					<h3>add<wbr>Resource</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Resource<span class="tsd-signature-symbol">(</span>resource<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="_core_resource_.resource.html" class="tsd-signature-type">Resource</a>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_core_resource_.iresourceoptions.html" class="tsd-signature-type">IResourceOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L154">src/core/Rbac.ts:154</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>add a single resource</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>resource: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="_core_resource_.resource.html" class="tsd-signature-type">Resource</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the resorce or a Resource instance</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/_core_resource_.iresourceoptions.html" class="tsd-signature-type">IResourceOptions</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the options of the resource</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addrole" class="tsd-anchor"></a>
+					<h3>add<wbr>Role</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Role<span class="tsd-signature-symbol">(</span>role<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="_core_role_.role.html" class="tsd-signature-type">Role</a>, label<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, description<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, resourceFilterGetters<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_core_role_.iresourcefilters.html" class="tsd-signature-type">IResourceFilters</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L119">src/core/Rbac.ts:119</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>insert a single Role</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>role: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="_core_role_.role.html" class="tsd-signature-type">Role</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the role or the Role Object</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> label: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the role label</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> description: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the role description</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> resourceFilterGetters: <a href="../interfaces/_core_role_.iresourcefilters.html" class="tsd-signature-type">IResourceFilters</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the object containing resurce filter getters</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="can" class="tsd-anchor"></a>
+					<h3>can</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">can<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_iuser_.iuser.html" class="tsd-signature-type">IUser</a>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, resourceName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, resourceObj<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_core_rbac_.icheck.html" class="tsd-signature-type">ICheck</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L370">src/core/Rbac.ts:370</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>test if a user can perform a single action on a resource</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>user: <a href="../interfaces/_core_iuser_.iuser.html" class="tsd-signature-type">IUser</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the user object to be tested</p>
+									</div>
+								</li>
+								<li>
+									<h5>action: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the action name</p>
+									</div>
+								</li>
+								<li>
+									<h5>resourceName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the resource to test</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> resourceObj: <span class="tsd-signature-type">unknown</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the resource object. If defined, then user roles and resource-roles will be evaluated</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_core_rbac_.icheck.html" class="tsd-signature-type">ICheck</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>the permission check result</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="canmiddleware" class="tsd-anchor"></a>
+					<h3>can<wbr>Middleware</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">can<wbr>Middleware<span class="tsd-signature-symbol">(</span>action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, resource<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestHandler</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L476">src/core/Rbac.ts:476</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>permission check middleware wrapper</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>action: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the action</p>
+									</div>
+								</li>
+								<li>
+									<h5>resource: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the resource</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">RequestHandler</span></h4>
+							<p>the actual middleware function
+							Usage:</p>
+							<pre><code class="language-ts">app.get(<span class="hljs-string">&#x27;/tickets&#x27;</span>,canMiddleware(<span class="hljs-string">&#x27;read&#x27;</span>,<span class="hljs-string">&#x27;ticket&#x27;</span>), yourController)</code></pre>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="checkrolename" class="tsd-anchor"></a>
+					<h3>check<wbr>Role<wbr>Name</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">check<wbr>Role<wbr>Name<span class="tsd-signature-symbol">(</span>roleName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L251">src/core/Rbac.ts:251</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>check if a role name already exists</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>throw</dt>
+									<dd><p>exception when there is a match</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>roleName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the role name</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="could" class="tsd-anchor"></a>
+					<h3>could</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">could<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_iuser_.iuser.html" class="tsd-signature-type">IUser</a>, resourceName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, resourceObj<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_core_rbac_.ichecks.html" class="tsd-signature-type">IChecks</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L294">src/core/Rbac.ts:294</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>retrieve the list of all user permissions against a single resource</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>user: <a href="../interfaces/_core_iuser_.iuser.html" class="tsd-signature-type">IUser</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the user object to be tested</p>
+									</div>
+								</li>
+								<li>
+									<h5>resourceName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the resource to test</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> resourceObj: <span class="tsd-signature-type">unknown</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the resource object. If defined, then user roles and resource-roles will be evaluated</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_core_rbac_.ichecks.html" class="tsd-signature-type">IChecks</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>the list of user-permissions</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="filtermiddleware" class="tsd-anchor"></a>
+					<h3>filter<wbr>Middleware</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">filter<wbr>Middleware<span class="tsd-signature-symbol">(</span>resource<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RequestHandler</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L509">src/core/Rbac.ts:509</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>filter middleware wrapper</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>resource: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the resource</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">RequestHandler</span></h4>
+							<p>the actual middleware function
+							Usage:</p>
+							<pre><code class="language-ts">app.get(<span class="hljs-string">&#x27;/tickets&#x27;</span>,filterMiddleware(<span class="hljs-string">&#x27;ticket&#x27;</span>), yourController)</code></pre>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getfilters" class="tsd-anchor"></a>
+					<h3>get<wbr>Filters</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Filters<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_iuser_.iuser.html" class="tsd-signature-type">IUser</a>, resourceName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L436">src/core/Rbac.ts:436</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>retrieve all the conditions to filter out a resource based on the current user</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>user: <a href="../interfaces/_core_iuser_.iuser.html" class="tsd-signature-type">IUser</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the current user object</p>
+									</div>
+								</li>
+								<li>
+									<h5>resourceName: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the name of the resource to be filtered</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>the list of conditions or <code>false</code> (user cannot read the resource)</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setpermissions" class="tsd-anchor"></a>
+					<h3>set<wbr>Permissions</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Permissions<span class="tsd-signature-symbol">(</span>permissions<span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_permission_.isytempermissionlist.html" class="tsd-signature-type">ISytemPermissionList</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L212">src/core/Rbac.ts:212</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>set all the permissions at once. Overwrite existing permissions</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>permissions: <a href="../interfaces/_core_permission_.isytempermissionlist.html" class="tsd-signature-type">ISytemPermissionList</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the list of permission configuration object</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setresources" class="tsd-anchor"></a>
+					<h3>set<wbr>Resources</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Resources<span class="tsd-signature-symbol">(</span>resources<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_core_resource_.iresource.html" class="tsd-signature-type">IResource</a><span class="tsd-signature-symbol"> | </span><a href="_core_resource_.resource.html" class="tsd-signature-type">Resource</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L166">src/core/Rbac.ts:166</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set all the resources at once. overwrites existing resources</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>resources: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_core_resource_.iresource.html" class="tsd-signature-type">IResource</a><span class="tsd-signature-symbol"> | </span><a href="_core_resource_.resource.html" class="tsd-signature-type">Resource</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the list of resources. Single items can be both string or Resource instance or IResource object</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="setroles" class="tsd-anchor"></a>
+					<h3>set<wbr>Roles</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Roles<span class="tsd-signature-symbol">(</span>roles<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_core_role_.irole.html" class="tsd-signature-type">IRole</a><span class="tsd-signature-symbol"> | </span><a href="_core_role_.role.html" class="tsd-signature-type">Role</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L133">src/core/Rbac.ts:133</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set all the roles at once. overwrites existing roles</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>roles: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/_core_role_.irole.html" class="tsd-signature-type">IRole</a><span class="tsd-signature-symbol"> | </span><a href="_core_role_.role.html" class="tsd-signature-type">Role</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the list of roles. Single items can be both string or Role instance or IRole object</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="tojson" class="tsd-anchor"></a>
+					<h3>toJSON</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">toJSON<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/_core_rbac_.iserializedrbac.html" class="tsd-signature-type">ISerializedRbac</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Lele/node-pseudo-rbac/blob/2a33bba/src/core/Rbac.ts#L259">src/core/Rbac.ts:259</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_core_rbac_.iserializedrbac.html" class="tsd-signature-type">ISerializedRbac</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_core_action_.html">&quot;core/<wbr>Action&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_core_attributes_.html">&quot;core/<wbr>Attributes&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_core_iuser_.html">&quot;core/IUser&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_core_permission_.html">&quot;core/<wbr>Permission&quot;</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="../modules/_core_rbac_.html">&quot;core/<wbr>Rbac&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_core_resource_.html">&quot;core/<wbr>Resource&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_core_role_.html">&quot;core/<wbr>Role&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_core_index_.html">&quot;core/index&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter">
+						<a href="_core_rbac_.rbac.html" class="tsd-kind-icon">Rbac</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#permissiondeniedcallback" class="tsd-kind-icon">permission<wbr>Denied<wbr>Callback</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#permissions" class="tsd-kind-icon">permissions</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#resources" class="tsd-kind-icon">resources</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#roles" class="tsd-kind-icon">roles</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#userprop" class="tsd-kind-icon">user<wbr>Prop</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#addpermission" class="tsd-kind-icon">add<wbr>Permission</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#addresource" class="tsd-kind-icon">add<wbr>Resource</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#addrole" class="tsd-kind-icon">add<wbr>Role</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#can" class="tsd-kind-icon">can</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#canmiddleware" class="tsd-kind-icon">can<wbr>Middleware</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#checkrolename" class="tsd-kind-icon">check<wbr>Role<wbr>Name</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#could" class="tsd-kind-icon">could</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#filtermiddleware" class="tsd-kind-icon">filter<wbr>Middleware</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#getfilters" class="tsd-kind-icon">get<wbr>Filters</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#setpermissions" class="tsd-kind-icon">set<wbr>Permissions</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#setresources" class="tsd-kind-icon">set<wbr>Resources</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#setroles" class="tsd-kind-icon">set<wbr>Roles</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_core_rbac_.rbac.html#tojson" class="tsd-kind-icon">toJSON</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="../interfaces/_core_rbac_.baserequest.html" class="tsd-kind-icon">Base<wbr>Request</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_core_rbac_.icheck.html" class="tsd-kind-icon">ICheck</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_core_rbac_.ichecks.html" class="tsd-kind-icon">IChecks</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_core_rbac_.ipermissiondenied.html" class="tsd-kind-icon">IPermission<wbr>Denied</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="../interfaces/_core_rbac_.irbacoptions.html" class="tsd-kind-icon">IRbac<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
+						<a href="../interfaces/_core_rbac_.iserializedrbac.html" class="tsd-kind-icon">ISerialized<wbr>Rbac</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="../modules/_core_rbac_.html#irequest" class="tsd-kind-icon">IRequest</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
+						<a href="../modules/_core_rbac_.html#glob" class="tsd-kind-icon">Glob</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-has-type-parameter tsd-is-not-exported">
+						<a href="../modules/_core_rbac_.html#isirequest" class="tsd-kind-icon">isIRequest</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

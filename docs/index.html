@@ -1,0 +1,444 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>node-pseudo-rbac</title>
+	<meta name="description" content="Documentation for node-pseudo-rbac">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">node-pseudo-rbac</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>node-pseudo-rbac</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<p>Permission library specifically designed to be used together with express but with no real dependencies.
+				In its simplest form it implements <a href="https://en.wikipedia.org/wiki/Role-based_access_control">RBAC</a> but it let also define roles that user can take on with respect to the resource.</p>
+				<a href="#pseudo-rbac" id="pseudo-rbac" style="color: inherit; text-decoration: none;">
+					<h1>PSEUDO RBAC</h1>
+				</a>
+				<p>We started to build this library because our team needed a permission library that could evaluate the permissions of a user based on his/her role in the application and with respect to the resource taken into consideration.</p>
+				<p>In particular the library lets you:</p>
+				<ul>
+					<li>define <code>role</code>s</li>
+					<li>define <code>resource</code>s and their own specific roles (called <code>resource-role</code>s)</li>
+					<li>define <code>permission</code>s for each role and resource-role with respect of each resource</li>
+					<li>define a list of query-conditions to filter out resources starting from user roles</li>
+					<li>use express middleware to manage user access on resources</li>
+				</ul>
+				<p>Permissions are attribute-based, this means that you can specify a list of resource attributes to limit the effect of an action.</p>
+				<a href="#example" id="example" style="color: inherit; text-decoration: none;">
+					<h2>EXAMPLE</h2>
+				</a>
+				<p>For example, let&#39;s consider we have to build a ticketing system with these requirements:</p>
+				<ul>
+					<li>user has one or more Roles among: Owner, Member, Customer</li>
+					<li>every ticket has an author, an assignee and 0 or more watchers</li>
+					<li>ticket can be assigned to one user</li>
+				</ul>
+				<p>We can immediately see that every user has a Role in the application (Owner, Member or Customer) and one or more roles with respect to the ticket; we want to define permissions based on all of them.
+				For example, let&#39;s think about <em>read</em>, <em>update</em>, <em>assign</em> and <em>comment</em> permissions. We could state that:</p>
+				<a href="#read" id="read" style="color: inherit; text-decoration: none;">
+					<h4>read</h4>
+				</a>
+				<ul>
+					<li>the Owner can read <code>ANY</code> ticket</li>
+					<li>a Member can read  <code>ANY</code> ticket</li>
+					<li>a Customer can read <strong>only</strong>  tickets in which is involved (i.e. he is either the author or one of the watchers)</li>
+				</ul>
+				<a href="#assign" id="assign" style="color: inherit; text-decoration: none;">
+					<h4>assign</h4>
+				</a>
+				<ul>
+					<li>the Owner can assign <code>ANY</code> ticket</li>
+					<li>a Member can assign tickets he/she has created (he/she is the author)</li>
+					<li>a Customer cannot assign tickets</li>
+				</ul>
+				<a href="#comment" id="comment" style="color: inherit; text-decoration: none;">
+					<h4>comment</h4>
+				</a>
+				<ul>
+					<li>the Owner can comment <code>ANY</code> ticket</li>
+					<li>authors, watchers and assignees can comment their <code>OWN</code> tickets</li>
+					<li>a Customers cannot comment any tickets</li>
+				</ul>
+				<a href="#update" id="update" style="color: inherit; text-decoration: none;">
+					<h4>update</h4>
+				</a>
+				<ul>
+					<li>the Owner can comment <code>ANY</code> ticket</li>
+					<li>authors can update their own tickets</li>
+					<li>watcher and assignees cannot update tickets</li>
+					<li>a Member can always update ticket titles in the tickets they are involved in</li>
+				</ul>
+				<p>Our ticket library let the user define:</p>
+				<ul>
+					<li>user Roles (Owner, Member, Customer)</li>
+					<li>resources (ticket, attachment)</li>
+					<li>role permissions</li>
+				</ul>
+				<a href="#defining-roles" id="defining-roles" style="color: inherit; text-decoration: none;">
+					<h3>Defining <strong>ROLES</strong></h3>
+				</a>
+				<p>First, we want to define user roles. Create a new file <em>roles.js</em> and insert the code that will define roles and their correspondent labels:</p>
+				<pre><code class="language-js">  <span class="hljs-comment">// roles as an array of objects defining the name and the label of each one</span>
+  <span class="hljs-keyword">const</span> roles = [{
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;owner&#x27;</span>,
+    <span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;Owner&#x27;</span>
+  }, {
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;member&#x27;</span>,
+    <span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;Member&#x27;</span>
+  }, {
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;customer&#x27;</span>,
+    <span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;Customer&#x27;</span>
+  }]
+
+  <span class="hljs-built_in">module</span>.exports = roles</code></pre>
+				<a href="#defining-resources" id="defining-resources" style="color: inherit; text-decoration: none;">
+					<h3>Defining <strong>RESOURCES</strong></h3>
+				</a>
+				<p>Resources are more complicated to define.
+				For each resource we have to explicitly write:</p>
+				<ul>
+					<li>the <code>actions</code> that could be performed by users</li>
+					<li>the <code>resourceRoles</code> that a user can have with respect to the resource itself</li>
+					<li>the <code>resourceRolePermissions</code> that will define generic permission on the resource</li>
+					<li>a custmom <code>getRoles</code> function that will return the roles and the resourceRoles of the user that will be evaluated</li>
+				</ul>
+				<p>Let&#39;s create a new file <em>ticket.js</em> and define resource roles permissions such that <code>author</code>s, <code>watcher</code>s and <code>assignee</code>s can <code>read</code> and <code>comment</code> tickets.</p>
+				<pre><code class="language-js">  <span class="hljs-comment">// always define resources with actions</span>
+  <span class="hljs-comment">// if the user can assume particular roles with respect to the resource you have to specify resource-roles</span>
+  <span class="hljs-comment">// at this point you need to define a function that returns user roles and user resource-roles</span>
+  <span class="hljs-comment">// if you specify resource-roles you probably want to specify generic resource-role permissions for every action</span>
+  <span class="hljs-built_in">module</span>.exports = {
+    <span class="hljs-attr">name</span>:<span class="hljs-string">&#x27;ticket&#x27;</span>,
+    <span class="hljs-attr">resourceRoles</span>: [<span class="hljs-string">&#x27;author&#x27;</span>, <span class="hljs-string">&#x27;watcher&#x27;</span>, <span class="hljs-string">&#x27;assignee&#x27;</span>],
+    <span class="hljs-attr">actions</span>: [<span class="hljs-string">&#x27;read&#x27;</span>, <span class="hljs-string">&#x27;assign&#x27;</span>, <span class="hljs-string">&#x27;comment&#x27;</span>],
+    <span class="hljs-attr">resourceRolePermissions</span>: {
+      <span class="hljs-attr">author</span>: {
+        <span class="hljs-attr">read</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">comment</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">update</span>: <span class="hljs-literal">true</span>
+      },
+      <span class="hljs-attr">watcher</span>: {
+        <span class="hljs-attr">read</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">comment</span>: <span class="hljs-literal">true</span>
+      },
+      <span class="hljs-attr">assignee</span>: {
+        <span class="hljs-attr">read</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">comment</span>: <span class="hljs-literal">true</span>,
+      }
+    },
+    <span class="hljs-attr">getRoles</span>: <span class="hljs-function">(<span class="hljs-params">user, ticket</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> roles = user.roles
+      <span class="hljs-keyword">const</span> resourceRoles = []
+
+      <span class="hljs-keyword">if</span> (ticket.watchers.includes(user.id)) {
+        resourceRoles.push(<span class="hljs-string">&#x27;watcher&#x27;</span>)
+      }
+      <span class="hljs-keyword">if</span> (ticket.author === user.id) {
+        resourceRoles.push(<span class="hljs-string">&#x27;author&#x27;</span>)
+      }
+      <span class="hljs-keyword">if</span> (ticket.assignee === user.id) {
+        resourceRoles.push(<span class="hljs-string">&#x27;assignee&#x27;</span>)
+      }
+      <span class="hljs-keyword">return</span> {
+        roles,
+        resourceRoles
+      }
+    }
+  }</code></pre>
+				<a href="#defining-role-permissions" id="defining-role-permissions" style="color: inherit; text-decoration: none;">
+					<h3>Defining <strong>ROLE PERMISSIONS</strong></h3>
+				</a>
+				<p>Finally we can define roles permissions. The permissions-object defines permissions on every resource and role.
+				Possible values for each permission are:</p>
+				<ul>
+					<li>a <code>boolean</code></li>
+					<li>an array of strings defining which attributes the user has the permission on (especially useful for read and update permissions)</li>
+					<li>a <code>resourceRolePermission</code> to overwrite generic resource role permissions</li>
+				</ul>
+				<p>let&#39;s create a <em>permissions.js</em> file</p>
+				<pre><code class="language-js">  <span class="hljs-keyword">const</span> { ANY } = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;node-pseudo-rbac/core&#x27;</span>)
+
+  <span class="hljs-built_in">module</span>.exports = {
+    <span class="hljs-attr">ticket</span>: {
+      <span class="hljs-attr">owner</span>: {
+      <span class="hljs-comment">// owners can read, update, assign and comment regardless their role in the ticket</span>
+        <span class="hljs-attr">read</span>: ANY,
+        <span class="hljs-attr">assign</span>: <span class="hljs-literal">true</span>,
+        <span class="hljs-attr">comment</span>: ANY,
+        <span class="hljs-attr">update</span>: ANY
+      },
+      <span class="hljs-comment">// overwrite generic assign and update behaviour for Member role</span>
+      <span class="hljs-attr">member</span>: {
+        <span class="hljs-attr">read</span>: ANY,
+        <span class="hljs-attr">assign</span>: {
+          <span class="hljs-attr">author</span>: <span class="hljs-literal">true</span>
+        },
+        <span class="hljs-attr">update</span>: [<span class="hljs-string">&#x27;title&#x27;</span>]
+      },
+      <span class="hljs-comment">//Customers cannot comment any ticket</span>
+      <span class="hljs-attr">customer</span>: {
+        <span class="hljs-attr">comment</span>: <span class="hljs-literal">false</span>
+      }
+    }
+  }</code></pre>
+				<a href="#configure-rbac" id="configure-rbac" style="color: inherit; text-decoration: none;">
+					<h3>Configure <code>rbac</code></h3>
+				</a>
+				<p>now we have to configure the rbac instance with all the created conf. Let&#39;s do this in a <em>rbac.js</em> file</p>
+				<pre><code class="language-js">  <span class="hljs-keyword">const</span> Rbac = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;node-pseudo-rbac&#x27;</span>)
+  <span class="hljs-keyword">const</span> roles = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./roles&#x27;</span>)
+  <span class="hljs-keyword">const</span> ticket = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./ticket&#x27;</span>)
+  <span class="hljs-keyword">const</span> permissions = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./permissions&#x27;</span>)
+
+  <span class="hljs-keyword">const</span> rbac = <span class="hljs-keyword">new</span> Rbac()
+
+  rbac.setRoles(roles)
+  rbac.addResource(ticket)
+  rbac.setPermissions(permissions)
+
+  <span class="hljs-comment">// or</span>
+  <span class="hljs-comment">// const rbac = new Rbac({</span>
+  <span class="hljs-comment">//  roles,</span>
+  <span class="hljs-comment">//  ticket,</span>
+  <span class="hljs-comment">//  permissions</span>
+  <span class="hljs-comment">// })</span>
+
+  <span class="hljs-built_in">module</span>.exports = rbac</code></pre>
+				<a href="#apply-the-permission-middleware" id="apply-the-permission-middleware" style="color: inherit; text-decoration: none;">
+					<h3>Apply the Permission <strong>MIDDLEWARE</strong></h3>
+				</a>
+				<pre><code class="language-js">  <span class="hljs-keyword">const</span> rbac = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./rbac&#x27;</span>)
+  <span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
+
+  <span class="hljs-keyword">const</span> app = express()
+
+  app.param(<span class="hljs-string">&#x27;ticketId&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">req, res, next, id</span>) =&gt;</span> {
+    req.ticket = myGetTicketFunc(id)
+    next()
+  })
+
+  <span class="hljs-comment">// req.user e req[&quot;resourceName&quot;] should be defined like the resource we want to test permissions on</span>
+  app.get(<span class="hljs-string">&#x27;tickets/:ticketId&#x27;</span>,myAuthMiddleware, rbac.canMiddleware(<span class="hljs-string">&#x27;read&#x27;</span>, <span class="hljs-string">&#x27;ticket&#x27;</span>), myGetTicketController)</code></pre>
+				<p>If the user has the permission to access the controller, then the library will place a <code>permissionRes</code> attribute in the req object.<br><code>permissionRes</code> has the following structure:</p>
+				<pre><code class="language-ts">  {
+    <span class="hljs-attr">matches</span>: [ <span class="hljs-comment">// the list of permission matches (for debugging purposes)</span>
+      {
+        <span class="hljs-attr">match</span>: {
+          role?:<span class="hljs-built_in">string</span>,
+          resourceRole?:<span class="hljs-built_in">string</span>
+        },
+        <span class="hljs-attr">value</span>: <span class="hljs-built_in">boolean</span> | ANY,
+        <span class="hljs-attr">attributes</span>: <span class="hljs-built_in">string</span>[]
+      }
+    ],
+    <span class="hljs-attr">value</span>: <span class="hljs-built_in">boolean</span> | ANY, <span class="hljs-comment">// the global value of the permission</span>
+    <span class="hljs-attr">attributes</span>: <span class="hljs-built_in">string</span>[] <span class="hljs-comment">// the list of attributes that the user can access for the specified action</span>
+  }</code></pre>
+				<a href="#query-conditions" id="query-conditions" style="color: inherit; text-decoration: none;">
+					<h2>QUERY-CONDITIONS</h2>
+				</a>
+				<p>Another important feature lets you define for each resource - and for each role (including resource-roles) - the filters, you need to apply to your preferred DB, to list all the possible instances of that resource. <br>Considering the previous example, we know that:</p>
+				<ul>
+					<li>Members and Owners can read <code>any</code> ticket</li>
+					<li>Customers can read only tickets in which they are involved</li>
+				</ul>
+				<a href="#defining-filtergetters" id="defining-filtergetters" style="color: inherit; text-decoration: none;">
+					<h3>Defining <strong>filterGetters</strong></h3>
+				</a>
+				<p>Members and Customers can read <code>any</code> ticket, so there&#39;s no need to apply any filter to the resource. <br>However we still have to define what does it means to be involved in a ticket and we can achieve this result describing the filters that characterize resource roles:</p>
+				<p><code>ticket.js</code></p>
+				<pre><code class="language-diff">  // always define resources with actions
+  // if the user can assume particular roles with respect to the resource you have to specify resource-roles
+  // at this point you need to define a function that returns user roles and user resource-roles
+  // if you specify resource-roles you probably want to specify generic resource-role permissions for every action
+  module.exports = {
+    name:&#x27;ticket&#x27;,
+  -   resourceRoles: [&#x27;author&#x27;, &#x27;watcher&#x27;, &#x27;assignee&#x27;],
+  +   resourceRoles: [{
+  +     name: &#x27;author&#x27;,
+  +     resourceFilterGetter: (user) =&gt; {
+  +       return [{ author: user.id }]
+  +     }
+  +   }, {
+  +     name: &#x27;watcher&#x27;,
+  +     resourceFilterGetter: (user) =&gt; {
+  +       return [{ watchers: user.id }]
+  +     }
+  +   }, {
+  +     name: &#x27;assignee&#x27;,
+  +     resourceFilterGetter: (user) =&gt; {
+  +       return [{ assignee: user.id }]
+  +     }
+  +   }],
+    actions: [&#x27;read&#x27;, &#x27;assign&#x27;, &#x27;comment&#x27;],
+    .
+    .
+    .
+  }</code></pre>
+				<p>Here we supposed to deal with a no-sql db but the resourceFilterGetter return-value could be any type of array.<br>Even Roles can have filter getters and you can define them specifying the <code>resourceFilterGetters</code> property in the following way:</p>
+				<pre><code class="language-js">  <span class="hljs-keyword">const</span> Rbac = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;node-pseudo-rbac&#x27;</span>)
+
+  <span class="hljs-keyword">const</span> rbac = <span class="hljs-keyword">new</span> Rbac()
+
+  rbac.addRole(<span class="hljs-string">&#x27;Tester&#x27;</span>, {
+    <span class="hljs-attr">resourceFilterGetters</span>: {
+      <span class="hljs-attr">ticket</span>: <span class="hljs-function">(<span class="hljs-params">user</span>) =&gt;</span> {
+        <span class="hljs-keyword">return</span> [{ <span class="hljs-attr">tester</span>: user.id }]
+      }
+    }
+  })</code></pre>
+				<a href="#applying-the-filter-middleware" id="applying-the-filter-middleware" style="color: inherit; text-decoration: none;">
+					<h3>Applying the <strong>filter middleware</strong></h3>
+				</a>
+				<p>Applying the filter middleware is as simple as for any other middleware:</p>
+				<pre><code class="language-js">  <span class="hljs-keyword">const</span> rbac = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./rbac&#x27;</span>)
+  <span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>);
+
+  <span class="hljs-keyword">const</span> app = express()
+
+  app.get(<span class="hljs-string">&#x27;tickets/&#x27;</span>,myAuthMiddleware, rbac.filterMiddleware(<span class="hljs-string">&#x27;ticket&#x27;</span>), myTicketListController)</code></pre>
+				<p>Once executed, the filter middleware will populate the <code>permissionFilters</code> property of the <code>req</code> object containing the array of your predefined filters accordingly to the roles of your user.</p>
+				<p>Obviously if a user has no <strong>read</strong> permission on the resource he will receive a 401 error. On the other hand, a user that can read <code>any</code> ticket, results in an empty <code>permissionFilters</code> array.</p>
+				<a href="#permission-denied-handler" id="permission-denied-handler" style="color: inherit; text-decoration: none;">
+					<h2>PERMISSION DENIED HANDLER</h2>
+				</a>
+				<p>You can customize the behavior of the middleware in case the user does not have any permission. You only need to add a <code>permissionDeniedCallback</code> to the Rbac definition, in this way:</p>
+				<pre><code class="language-js">  <span class="hljs-keyword">const</span> rbac = <span class="hljs-keyword">new</span> Rbac({<span class="hljs-attr">permissionDeniedCallback</span>: <span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;&#x27;tacci tua&quot;</span>);
+    res.sendStatus(<span class="hljs-number">401</span>)
+  }})</code></pre>
+				<a href="#credits" id="credits" style="color: inherit; text-decoration: none;">
+					<h1>CREDITS</h1>
+				</a>
+				<p>This library was inspired by <a href="https://github.com/onury/accesscontrol">https://github.com/onury/accesscontrol</a></p>
+				<a href="#dependencies" id="dependencies" style="color: inherit; text-decoration: none;">
+					<h2>DEPENDENCIES</h2>
+				</a>
+				<ul>
+					<li><a href="https://www.npmjs.com/package/@types/express">https://www.npmjs.com/package/@types/express</a></li>
+					<li><a href="https://www.npmjs.com/package/notation">https://www.npmjs.com/package/notation</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_action_.html">&quot;core/<wbr>Action&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_attributes_.html">&quot;core/<wbr>Attributes&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_iuser_.html">&quot;core/IUser&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_permission_.html">&quot;core/<wbr>Permission&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_rbac_.html">&quot;core/<wbr>Rbac&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_resource_.html">&quot;core/<wbr>Resource&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_role_.html">&quot;core/<wbr>Role&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_core_index_.html">&quot;core/index&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
